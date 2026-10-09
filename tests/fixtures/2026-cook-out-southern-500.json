@@ -1,0 +1,1729 @@
+{
+  "events": [
+    {
+      "flag": "green",
+      "lap": 0,
+      "metadata": {
+        "historical": true,
+        "note": "Inspection: #12 failed twice (loss of pit selection; car chief ejected). | Practice and Qualifying cancelled due to lightning",
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-06T21:00:00+00:00",
+      "offset": 0.0,
+      "raw_state": 1,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    },
+    {
+      "flag": "yellow",
+      "lap": 35,
+      "metadata": {
+        "historical": true,
+        "note": "Competition caution waves",
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-06T21:17:30.291655+00:00",
+      "offset": 1050.292,
+      "raw_state": 2,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    },
+    {
+      "flag": "green",
+      "lap": 40,
+      "metadata": {
+        "historical": true,
+        "note": null,
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-06T21:23:35.071317+00:00",
+      "offset": 1415.071,
+      "raw_state": 1,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    },
+    {
+      "flag": "yellow",
+      "lap": 107,
+      "metadata": {
+        "historical": true,
+        "note": "Caution: #6 spins from 17th on the frontstretch after contact with #77 in turn 4.  This caution will end stage 1.  #45 wins the stage followed by #23, #11, #20 and #12.  The entire top 10 that scored stage points are Chase drivers",
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-06T21:57:20.044071+00:00",
+      "offset": 3440.044,
+      "raw_state": 2,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    },
+    {
+      "flag": "green",
+      "lap": 113,
+      "metadata": {
+        "historical": true,
+        "note": null,
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-06T22:05:56.076593+00:00",
+      "offset": 3956.077,
+      "raw_state": 1,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    },
+    {
+      "flag": "yellow",
+      "lap": 230,
+      "metadata": {
+        "historical": true,
+        "note": "#20 wins stage 2 followed by #5, #11, #19 and #23.  #19 appears to slow with low fuel off turn 4",
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-06T23:04:38.610086+00:00",
+      "offset": 7478.61,
+      "raw_state": 2,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    },
+    {
+      "flag": "green",
+      "lap": 237,
+      "metadata": {
+        "historical": true,
+        "note": "Restart: #5 leads from the outside, #12 inside.  #5 gets a great jump and clears for the lead on the frontstretch, #23 moves to 2nd as #12 falls to a battle for 3rd with #45",
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-06T23:13:44.101181+00:00",
+      "offset": 8024.101,
+      "raw_state": 1,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    },
+    {
+      "flag": "yellow",
+      "lap": 283,
+      "metadata": {
+        "historical": true,
+        "note": "Caution: #38 spins on the frontstretch from 18th after contact with #71",
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-06T23:36:50.520677+00:00",
+      "offset": 9410.521,
+      "raw_state": 2,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    },
+    {
+      "flag": "green",
+      "lap": 289,
+      "metadata": {
+        "historical": true,
+        "note": null,
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-06T23:45:21.463381+00:00",
+      "offset": 9921.463,
+      "raw_state": 1,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    },
+    {
+      "flag": "yellow",
+      "lap": 316,
+      "metadata": {
+        "historical": true,
+        "note": "Caution: #24 spins in turn 3 from 9th",
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-06T23:58:51.657718+00:00",
+      "offset": 10731.658,
+      "raw_state": 2,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    },
+    {
+      "flag": "green",
+      "lap": 331,
+      "metadata": {
+        "historical": true,
+        "note": "Restart: #20 leads from the outside, #19 inside.  Both battle side-by-side for the entire lap as #54 moves to 3rd",
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-07T00:15:37.847884+00:00",
+      "offset": 11737.848,
+      "raw_state": 1,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    },
+    {
+      "flag": "yellow",
+      "lap": 335,
+      "metadata": {
+        "historical": true,
+        "note": "Caution: Possible fluid on track/rain",
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-07T00:30:22.059351+00:00",
+      "offset": 12622.059,
+      "raw_state": 2,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    },
+    {
+      "flag": "red",
+      "lap": 338,
+      "metadata": {
+        "historical": true,
+        "note": "Field comes to pit road as the red is displayed (red flag time: 7:39)",
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-07T00:42:50.628695+00:00",
+      "offset": 13370.629,
+      "raw_state": 3,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    },
+    {
+      "flag": "yellow",
+      "lap": 339,
+      "metadata": {
+        "historical": true,
+        "note": null,
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-07T00:52:59.504287+00:00",
+      "offset": 13979.504,
+      "raw_state": 2,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    },
+    {
+      "flag": "green",
+      "lap": 343,
+      "metadata": {
+        "historical": true,
+        "note": null,
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-07T00:58:50.054681+00:00",
+      "offset": 14330.055,
+      "raw_state": 1,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    },
+    {
+      "flag": "chequered",
+      "lap": 367,
+      "metadata": {
+        "historical": true,
+        "note": "#20 wins by 1.038 seconds over #54.",
+        "timing": "estimated_from_leader_lap_times"
+      },
+      "occurred_at": "2026-09-07T01:10:44+00:00",
+      "offset": 15044.0,
+      "raw_state": 4,
+      "remaining_seconds": null,
+      "source": "nascar",
+      "total_laps": 367
+    }
+  ],
+  "format": "raceflags-recording",
+  "lap_timeline": [
+    {
+      "lap": 1,
+      "offset": 0.0
+    },
+    {
+      "lap": 2,
+      "offset": 28.897
+    },
+    {
+      "lap": 3,
+      "offset": 57.058
+    },
+    {
+      "lap": 4,
+      "offset": 85.395
+    },
+    {
+      "lap": 5,
+      "offset": 113.943
+    },
+    {
+      "lap": 6,
+      "offset": 142.755
+    },
+    {
+      "lap": 7,
+      "offset": 171.757
+    },
+    {
+      "lap": 8,
+      "offset": 200.93
+    },
+    {
+      "lap": 9,
+      "offset": 230.241
+    },
+    {
+      "lap": 10,
+      "offset": 259.6
+    },
+    {
+      "lap": 11,
+      "offset": 289.116
+    },
+    {
+      "lap": 12,
+      "offset": 318.752
+    },
+    {
+      "lap": 13,
+      "offset": 348.62
+    },
+    {
+      "lap": 14,
+      "offset": 378.527
+    },
+    {
+      "lap": 15,
+      "offset": 408.431
+    },
+    {
+      "lap": 16,
+      "offset": 438.537
+    },
+    {
+      "lap": 17,
+      "offset": 468.72
+    },
+    {
+      "lap": 18,
+      "offset": 498.889
+    },
+    {
+      "lap": 19,
+      "offset": 529.12
+    },
+    {
+      "lap": 20,
+      "offset": 559.352
+    },
+    {
+      "lap": 21,
+      "offset": 589.63
+    },
+    {
+      "lap": 22,
+      "offset": 619.844
+    },
+    {
+      "lap": 23,
+      "offset": 650.288
+    },
+    {
+      "lap": 24,
+      "offset": 680.722
+    },
+    {
+      "lap": 25,
+      "offset": 711.584
+    },
+    {
+      "lap": 26,
+      "offset": 742.405
+    },
+    {
+      "lap": 27,
+      "offset": 773.077
+    },
+    {
+      "lap": 28,
+      "offset": 804.117
+    },
+    {
+      "lap": 29,
+      "offset": 835.106
+    },
+    {
+      "lap": 30,
+      "offset": 865.76
+    },
+    {
+      "lap": 31,
+      "offset": 896.549
+    },
+    {
+      "lap": 32,
+      "offset": 927.297
+    },
+    {
+      "lap": 33,
+      "offset": 957.932
+    },
+    {
+      "lap": 34,
+      "offset": 988.555
+    },
+    {
+      "lap": 35,
+      "offset": 1019.345
+    },
+    {
+      "lap": 36,
+      "offset": 1050.292
+    },
+    {
+      "lap": 37,
+      "offset": 1088.147
+    },
+    {
+      "lap": 38,
+      "offset": 1165.316
+    },
+    {
+      "lap": 39,
+      "offset": 1243.065
+    },
+    {
+      "lap": 40,
+      "offset": 1330.97
+    },
+    {
+      "lap": 41,
+      "offset": 1415.071
+    },
+    {
+      "lap": 42,
+      "offset": 1444.567
+    },
+    {
+      "lap": 43,
+      "offset": 1473.086
+    },
+    {
+      "lap": 44,
+      "offset": 1501.827
+    },
+    {
+      "lap": 45,
+      "offset": 1530.824
+    },
+    {
+      "lap": 46,
+      "offset": 1560.004
+    },
+    {
+      "lap": 47,
+      "offset": 1589.219
+    },
+    {
+      "lap": 48,
+      "offset": 1618.544
+    },
+    {
+      "lap": 49,
+      "offset": 1648.01
+    },
+    {
+      "lap": 50,
+      "offset": 1677.628
+    },
+    {
+      "lap": 51,
+      "offset": 1707.387
+    },
+    {
+      "lap": 52,
+      "offset": 1737.293
+    },
+    {
+      "lap": 53,
+      "offset": 1767.347
+    },
+    {
+      "lap": 54,
+      "offset": 1797.332
+    },
+    {
+      "lap": 55,
+      "offset": 1827.383
+    },
+    {
+      "lap": 56,
+      "offset": 1857.532
+    },
+    {
+      "lap": 57,
+      "offset": 1887.572
+    },
+    {
+      "lap": 58,
+      "offset": 1917.64
+    },
+    {
+      "lap": 59,
+      "offset": 1947.714
+    },
+    {
+      "lap": 60,
+      "offset": 1977.909
+    },
+    {
+      "lap": 61,
+      "offset": 2008.167
+    },
+    {
+      "lap": 62,
+      "offset": 2038.421
+    },
+    {
+      "lap": 63,
+      "offset": 2068.665
+    },
+    {
+      "lap": 64,
+      "offset": 2098.937
+    },
+    {
+      "lap": 65,
+      "offset": 2129.461
+    },
+    {
+      "lap": 66,
+      "offset": 2160.035
+    },
+    {
+      "lap": 67,
+      "offset": 2190.798
+    },
+    {
+      "lap": 68,
+      "offset": 2221.567
+    },
+    {
+      "lap": 69,
+      "offset": 2252.128
+    },
+    {
+      "lap": 70,
+      "offset": 2282.68
+    },
+    {
+      "lap": 71,
+      "offset": 2313.293
+    },
+    {
+      "lap": 72,
+      "offset": 2343.973
+    },
+    {
+      "lap": 73,
+      "offset": 2374.616
+    },
+    {
+      "lap": 74,
+      "offset": 2405.07
+    },
+    {
+      "lap": 75,
+      "offset": 2435.606
+    },
+    {
+      "lap": 76,
+      "offset": 2466.325
+    },
+    {
+      "lap": 77,
+      "offset": 2497.089
+    },
+    {
+      "lap": 78,
+      "offset": 2527.85
+    },
+    {
+      "lap": 79,
+      "offset": 2558.94
+    },
+    {
+      "lap": 80,
+      "offset": 2588.408
+    },
+    {
+      "lap": 81,
+      "offset": 2617.871
+    },
+    {
+      "lap": 82,
+      "offset": 2647.706
+    },
+    {
+      "lap": 83,
+      "offset": 2677.772
+    },
+    {
+      "lap": 84,
+      "offset": 2707.577
+    },
+    {
+      "lap": 85,
+      "offset": 2737.408
+    },
+    {
+      "lap": 86,
+      "offset": 2767.408
+    },
+    {
+      "lap": 87,
+      "offset": 2797.599
+    },
+    {
+      "lap": 88,
+      "offset": 2827.812
+    },
+    {
+      "lap": 89,
+      "offset": 2857.948
+    },
+    {
+      "lap": 90,
+      "offset": 2888.487
+    },
+    {
+      "lap": 91,
+      "offset": 2918.868
+    },
+    {
+      "lap": 92,
+      "offset": 2949.266
+    },
+    {
+      "lap": 93,
+      "offset": 2979.495
+    },
+    {
+      "lap": 94,
+      "offset": 3010.054
+    },
+    {
+      "lap": 95,
+      "offset": 3040.49
+    },
+    {
+      "lap": 96,
+      "offset": 3070.88
+    },
+    {
+      "lap": 97,
+      "offset": 3101.432
+    },
+    {
+      "lap": 98,
+      "offset": 3132.167
+    },
+    {
+      "lap": 99,
+      "offset": 3162.464
+    },
+    {
+      "lap": 100,
+      "offset": 3192.911
+    },
+    {
+      "lap": 101,
+      "offset": 3223.306
+    },
+    {
+      "lap": 102,
+      "offset": 3253.732
+    },
+    {
+      "lap": 103,
+      "offset": 3284.148
+    },
+    {
+      "lap": 104,
+      "offset": 3314.827
+    },
+    {
+      "lap": 105,
+      "offset": 3345.283
+    },
+    {
+      "lap": 106,
+      "offset": 3375.686
+    },
+    {
+      "lap": 107,
+      "offset": 3406.149
+    },
+    {
+      "lap": 108,
+      "offset": 3440.044
+    },
+    {
+      "lap": 109,
+      "offset": 3519.314
+    },
+    {
+      "lap": 110,
+      "offset": 3607.403
+    },
+    {
+      "lap": 111,
+      "offset": 3693.105
+    },
+    {
+      "lap": 112,
+      "offset": 3784.723
+    },
+    {
+      "lap": 113,
+      "offset": 3871.68
+    },
+    {
+      "lap": 114,
+      "offset": 3956.077
+    },
+    {
+      "lap": 115,
+      "offset": 3985.407
+    },
+    {
+      "lap": 116,
+      "offset": 4013.544
+    },
+    {
+      "lap": 117,
+      "offset": 4042.038
+    },
+    {
+      "lap": 118,
+      "offset": 4070.67
+    },
+    {
+      "lap": 119,
+      "offset": 4099.518
+    },
+    {
+      "lap": 120,
+      "offset": 4128.463
+    },
+    {
+      "lap": 121,
+      "offset": 4157.496
+    },
+    {
+      "lap": 122,
+      "offset": 4186.785
+    },
+    {
+      "lap": 123,
+      "offset": 4216.122
+    },
+    {
+      "lap": 124,
+      "offset": 4245.632
+    },
+    {
+      "lap": 125,
+      "offset": 4275.12
+    },
+    {
+      "lap": 126,
+      "offset": 4304.562
+    },
+    {
+      "lap": 127,
+      "offset": 4334.118
+    },
+    {
+      "lap": 128,
+      "offset": 4363.77
+    },
+    {
+      "lap": 129,
+      "offset": 4393.536
+    },
+    {
+      "lap": 130,
+      "offset": 4423.289
+    },
+    {
+      "lap": 131,
+      "offset": 4453.154
+    },
+    {
+      "lap": 132,
+      "offset": 4482.997
+    },
+    {
+      "lap": 133,
+      "offset": 4512.923
+    },
+    {
+      "lap": 134,
+      "offset": 4542.817
+    },
+    {
+      "lap": 135,
+      "offset": 4572.76
+    },
+    {
+      "lap": 136,
+      "offset": 4602.729
+    },
+    {
+      "lap": 137,
+      "offset": 4632.888
+    },
+    {
+      "lap": 138,
+      "offset": 4662.977
+    },
+    {
+      "lap": 139,
+      "offset": 4693.253
+    },
+    {
+      "lap": 140,
+      "offset": 4723.597
+    },
+    {
+      "lap": 141,
+      "offset": 4754.222
+    },
+    {
+      "lap": 142,
+      "offset": 4784.611
+    },
+    {
+      "lap": 143,
+      "offset": 4815.162
+    },
+    {
+      "lap": 144,
+      "offset": 4845.72
+    },
+    {
+      "lap": 145,
+      "offset": 4876.299
+    },
+    {
+      "lap": 146,
+      "offset": 4906.945
+    },
+    {
+      "lap": 147,
+      "offset": 4937.554
+    },
+    {
+      "lap": 148,
+      "offset": 4968.195
+    },
+    {
+      "lap": 149,
+      "offset": 4998.667
+    },
+    {
+      "lap": 150,
+      "offset": 5029.096
+    },
+    {
+      "lap": 151,
+      "offset": 5059.756
+    },
+    {
+      "lap": 152,
+      "offset": 5090.994
+    },
+    {
+      "lap": 153,
+      "offset": 5121.807
+    },
+    {
+      "lap": 154,
+      "offset": 5152.324
+    },
+    {
+      "lap": 155,
+      "offset": 5182.681
+    },
+    {
+      "lap": 156,
+      "offset": 5211.711
+    },
+    {
+      "lap": 157,
+      "offset": 5241.003
+    },
+    {
+      "lap": 158,
+      "offset": 5270.198
+    },
+    {
+      "lap": 159,
+      "offset": 5299.437
+    },
+    {
+      "lap": 160,
+      "offset": 5328.817
+    },
+    {
+      "lap": 161,
+      "offset": 5358.409
+    },
+    {
+      "lap": 162,
+      "offset": 5388.059
+    },
+    {
+      "lap": 163,
+      "offset": 5417.675
+    },
+    {
+      "lap": 164,
+      "offset": 5447.435
+    },
+    {
+      "lap": 165,
+      "offset": 5477.155
+    },
+    {
+      "lap": 166,
+      "offset": 5506.939
+    },
+    {
+      "lap": 167,
+      "offset": 5537.294
+    },
+    {
+      "lap": 168,
+      "offset": 5567.324
+    },
+    {
+      "lap": 169,
+      "offset": 5597.455
+    },
+    {
+      "lap": 170,
+      "offset": 5627.847
+    },
+    {
+      "lap": 171,
+      "offset": 5658.107
+    },
+    {
+      "lap": 172,
+      "offset": 5688.402
+    },
+    {
+      "lap": 173,
+      "offset": 5718.612
+    },
+    {
+      "lap": 174,
+      "offset": 5748.793
+    },
+    {
+      "lap": 175,
+      "offset": 5778.923
+    },
+    {
+      "lap": 176,
+      "offset": 5809.214
+    },
+    {
+      "lap": 177,
+      "offset": 5839.58
+    },
+    {
+      "lap": 178,
+      "offset": 5869.959
+    },
+    {
+      "lap": 179,
+      "offset": 5900.404
+    },
+    {
+      "lap": 180,
+      "offset": 5930.855
+    },
+    {
+      "lap": 181,
+      "offset": 5961.332
+    },
+    {
+      "lap": 182,
+      "offset": 5991.975
+    },
+    {
+      "lap": 183,
+      "offset": 6022.577
+    },
+    {
+      "lap": 184,
+      "offset": 6053.261
+    },
+    {
+      "lap": 185,
+      "offset": 6083.906
+    },
+    {
+      "lap": 186,
+      "offset": 6114.598
+    },
+    {
+      "lap": 187,
+      "offset": 6145.493
+    },
+    {
+      "lap": 188,
+      "offset": 6176.319
+    },
+    {
+      "lap": 189,
+      "offset": 6207.033
+    },
+    {
+      "lap": 190,
+      "offset": 6237.585
+    },
+    {
+      "lap": 191,
+      "offset": 6268.386
+    },
+    {
+      "lap": 192,
+      "offset": 6299.178
+    },
+    {
+      "lap": 193,
+      "offset": 6329.668
+    },
+    {
+      "lap": 194,
+      "offset": 6360.34
+    },
+    {
+      "lap": 195,
+      "offset": 6389.409
+    },
+    {
+      "lap": 196,
+      "offset": 6418.466
+    },
+    {
+      "lap": 197,
+      "offset": 6448.141
+    },
+    {
+      "lap": 198,
+      "offset": 6477.617
+    },
+    {
+      "lap": 199,
+      "offset": 6507.137
+    },
+    {
+      "lap": 200,
+      "offset": 6536.824
+    },
+    {
+      "lap": 201,
+      "offset": 6566.672
+    },
+    {
+      "lap": 202,
+      "offset": 6596.709
+    },
+    {
+      "lap": 203,
+      "offset": 6627.615
+    },
+    {
+      "lap": 204,
+      "offset": 6657.838
+    },
+    {
+      "lap": 205,
+      "offset": 6687.892
+    },
+    {
+      "lap": 206,
+      "offset": 6717.927
+    },
+    {
+      "lap": 207,
+      "offset": 6748.067
+    },
+    {
+      "lap": 208,
+      "offset": 6778.145
+    },
+    {
+      "lap": 209,
+      "offset": 6808.427
+    },
+    {
+      "lap": 210,
+      "offset": 6838.611
+    },
+    {
+      "lap": 211,
+      "offset": 6868.964
+    },
+    {
+      "lap": 212,
+      "offset": 6899.212
+    },
+    {
+      "lap": 213,
+      "offset": 6929.578
+    },
+    {
+      "lap": 214,
+      "offset": 6959.987
+    },
+    {
+      "lap": 215,
+      "offset": 6990.463
+    },
+    {
+      "lap": 216,
+      "offset": 7021.016
+    },
+    {
+      "lap": 217,
+      "offset": 7051.297
+    },
+    {
+      "lap": 218,
+      "offset": 7081.446
+    },
+    {
+      "lap": 219,
+      "offset": 7111.636
+    },
+    {
+      "lap": 220,
+      "offset": 7141.822
+    },
+    {
+      "lap": 221,
+      "offset": 7172.007
+    },
+    {
+      "lap": 222,
+      "offset": 7202.255
+    },
+    {
+      "lap": 223,
+      "offset": 7232.615
+    },
+    {
+      "lap": 224,
+      "offset": 7262.97
+    },
+    {
+      "lap": 225,
+      "offset": 7293.367
+    },
+    {
+      "lap": 226,
+      "offset": 7324.046
+    },
+    {
+      "lap": 227,
+      "offset": 7354.692
+    },
+    {
+      "lap": 228,
+      "offset": 7385.492
+    },
+    {
+      "lap": 229,
+      "offset": 7416.342
+    },
+    {
+      "lap": 230,
+      "offset": 7447.542
+    },
+    {
+      "lap": 231,
+      "offset": 7478.61
+    },
+    {
+      "lap": 232,
+      "offset": 7524.866
+    },
+    {
+      "lap": 233,
+      "offset": 7602.112
+    },
+    {
+      "lap": 234,
+      "offset": 7685.435
+    },
+    {
+      "lap": 235,
+      "offset": 7765.775
+    },
+    {
+      "lap": 236,
+      "offset": 7854.15
+    },
+    {
+      "lap": 237,
+      "offset": 7940.061
+    },
+    {
+      "lap": 238,
+      "offset": 8024.101
+    },
+    {
+      "lap": 239,
+      "offset": 8053.282
+    },
+    {
+      "lap": 240,
+      "offset": 8081.356
+    },
+    {
+      "lap": 241,
+      "offset": 8109.632
+    },
+    {
+      "lap": 242,
+      "offset": 8138.021
+    },
+    {
+      "lap": 243,
+      "offset": 8166.675
+    },
+    {
+      "lap": 244,
+      "offset": 8195.523
+    },
+    {
+      "lap": 245,
+      "offset": 8224.464
+    },
+    {
+      "lap": 246,
+      "offset": 8253.385
+    },
+    {
+      "lap": 247,
+      "offset": 8282.574
+    },
+    {
+      "lap": 248,
+      "offset": 8311.718
+    },
+    {
+      "lap": 249,
+      "offset": 8341.03
+    },
+    {
+      "lap": 250,
+      "offset": 8370.411
+    },
+    {
+      "lap": 251,
+      "offset": 8399.924
+    },
+    {
+      "lap": 252,
+      "offset": 8429.569
+    },
+    {
+      "lap": 253,
+      "offset": 8459.311
+    },
+    {
+      "lap": 254,
+      "offset": 8489.143
+    },
+    {
+      "lap": 255,
+      "offset": 8518.986
+    },
+    {
+      "lap": 256,
+      "offset": 8548.916
+    },
+    {
+      "lap": 257,
+      "offset": 8578.956
+    },
+    {
+      "lap": 258,
+      "offset": 8609.024
+    },
+    {
+      "lap": 259,
+      "offset": 8638.946
+    },
+    {
+      "lap": 260,
+      "offset": 8668.895
+    },
+    {
+      "lap": 261,
+      "offset": 8698.913
+    },
+    {
+      "lap": 262,
+      "offset": 8729.039
+    },
+    {
+      "lap": 263,
+      "offset": 8759.064
+    },
+    {
+      "lap": 264,
+      "offset": 8789.144
+    },
+    {
+      "lap": 265,
+      "offset": 8819.504
+    },
+    {
+      "lap": 266,
+      "offset": 8849.923
+    },
+    {
+      "lap": 267,
+      "offset": 8880.812
+    },
+    {
+      "lap": 268,
+      "offset": 8911.116
+    },
+    {
+      "lap": 269,
+      "offset": 8941.449
+    },
+    {
+      "lap": 270,
+      "offset": 8971.9
+    },
+    {
+      "lap": 271,
+      "offset": 9002.551
+    },
+    {
+      "lap": 272,
+      "offset": 9032.997
+    },
+    {
+      "lap": 273,
+      "offset": 9063.453
+    },
+    {
+      "lap": 274,
+      "offset": 9094.045
+    },
+    {
+      "lap": 275,
+      "offset": 9124.703
+    },
+    {
+      "lap": 276,
+      "offset": 9155.283
+    },
+    {
+      "lap": 277,
+      "offset": 9185.882
+    },
+    {
+      "lap": 278,
+      "offset": 9216.567
+    },
+    {
+      "lap": 279,
+      "offset": 9247.545
+    },
+    {
+      "lap": 280,
+      "offset": 9278.19
+    },
+    {
+      "lap": 281,
+      "offset": 9308.831
+    },
+    {
+      "lap": 282,
+      "offset": 9339.485
+    },
+    {
+      "lap": 283,
+      "offset": 9370.287
+    },
+    {
+      "lap": 284,
+      "offset": 9410.521
+    },
+    {
+      "lap": 285,
+      "offset": 9491.758
+    },
+    {
+      "lap": 286,
+      "offset": 9577.952
+    },
+    {
+      "lap": 287,
+      "offset": 9666.433
+    },
+    {
+      "lap": 288,
+      "offset": 9754.553
+    },
+    {
+      "lap": 289,
+      "offset": 9836.692
+    },
+    {
+      "lap": 290,
+      "offset": 9921.463
+    },
+    {
+      "lap": 291,
+      "offset": 9950.719
+    },
+    {
+      "lap": 292,
+      "offset": 9979.01
+    },
+    {
+      "lap": 293,
+      "offset": 10007.42
+    },
+    {
+      "lap": 294,
+      "offset": 10035.93
+    },
+    {
+      "lap": 295,
+      "offset": 10064.558
+    },
+    {
+      "lap": 296,
+      "offset": 10093.317
+    },
+    {
+      "lap": 297,
+      "offset": 10122.221
+    },
+    {
+      "lap": 298,
+      "offset": 10151.382
+    },
+    {
+      "lap": 299,
+      "offset": 10180.475
+    },
+    {
+      "lap": 300,
+      "offset": 10209.633
+    },
+    {
+      "lap": 301,
+      "offset": 10238.804
+    },
+    {
+      "lap": 302,
+      "offset": 10268.09
+    },
+    {
+      "lap": 303,
+      "offset": 10297.559
+    },
+    {
+      "lap": 304,
+      "offset": 10327.172
+    },
+    {
+      "lap": 305,
+      "offset": 10356.866
+    },
+    {
+      "lap": 306,
+      "offset": 10386.589
+    },
+    {
+      "lap": 307,
+      "offset": 10416.354
+    },
+    {
+      "lap": 308,
+      "offset": 10446.061
+    },
+    {
+      "lap": 309,
+      "offset": 10475.848
+    },
+    {
+      "lap": 310,
+      "offset": 10505.732
+    },
+    {
+      "lap": 311,
+      "offset": 10535.717
+    },
+    {
+      "lap": 312,
+      "offset": 10565.684
+    },
+    {
+      "lap": 313,
+      "offset": 10595.728
+    },
+    {
+      "lap": 314,
+      "offset": 10625.828
+    },
+    {
+      "lap": 315,
+      "offset": 10656.103
+    },
+    {
+      "lap": 316,
+      "offset": 10686.516
+    },
+    {
+      "lap": 317,
+      "offset": 10731.658
+    },
+    {
+      "lap": 318,
+      "offset": 10814.704
+    },
+    {
+      "lap": 319,
+      "offset": 10880.608
+    },
+    {
+      "lap": 320,
+      "offset": 10964.252
+    },
+    {
+      "lap": 321,
+      "offset": 11052.037
+    },
+    {
+      "lap": 322,
+      "offset": 11145.342
+    },
+    {
+      "lap": 323,
+      "offset": 11216.116
+    },
+    {
+      "lap": 324,
+      "offset": 11283.177
+    },
+    {
+      "lap": 325,
+      "offset": 11350.225
+    },
+    {
+      "lap": 326,
+      "offset": 11415.848
+    },
+    {
+      "lap": 327,
+      "offset": 11477.21
+    },
+    {
+      "lap": 328,
+      "offset": 11540.785
+    },
+    {
+      "lap": 329,
+      "offset": 11604.438
+    },
+    {
+      "lap": 330,
+      "offset": 11676.91
+    },
+    {
+      "lap": 331,
+      "offset": 11707.379
+    },
+    {
+      "lap": 332,
+      "offset": 11737.848
+    },
+    {
+      "lap": 333,
+      "offset": 11798.319
+    },
+    {
+      "lap": 334,
+      "offset": 11877.934
+    },
+    {
+      "lap": 335,
+      "offset": 12561.8
+    },
+    {
+      "lap": 336,
+      "offset": 12622.059
+    },
+    {
+      "lap": 337,
+      "offset": 12683.663
+    },
+    {
+      "lap": 338,
+      "offset": 12760.896
+    },
+    {
+      "lap": 339,
+      "offset": 13829.629
+    },
+    {
+      "lap": 340,
+      "offset": 13979.504
+    },
+    {
+      "lap": 341,
+      "offset": 14068.813
+    },
+    {
+      "lap": 342,
+      "offset": 14157.246
+    },
+    {
+      "lap": 343,
+      "offset": 14245.076
+    },
+    {
+      "lap": 344,
+      "offset": 14330.055
+    },
+    {
+      "lap": 345,
+      "offset": 14359.334
+    },
+    {
+      "lap": 346,
+      "offset": 14387.427
+    },
+    {
+      "lap": 347,
+      "offset": 14415.809
+    },
+    {
+      "lap": 348,
+      "offset": 14444.656
+    },
+    {
+      "lap": 349,
+      "offset": 14473.459
+    },
+    {
+      "lap": 350,
+      "offset": 14502.377
+    },
+    {
+      "lap": 351,
+      "offset": 14531.655
+    },
+    {
+      "lap": 352,
+      "offset": 14560.722
+    },
+    {
+      "lap": 353,
+      "offset": 14589.88
+    },
+    {
+      "lap": 354,
+      "offset": 14619.29
+    },
+    {
+      "lap": 355,
+      "offset": 14648.747
+    },
+    {
+      "lap": 356,
+      "offset": 14678.373
+    },
+    {
+      "lap": 357,
+      "offset": 14708.842
+    },
+    {
+      "lap": 358,
+      "offset": 14739.311
+    },
+    {
+      "lap": 359,
+      "offset": 14769.78
+    },
+    {
+      "lap": 360,
+      "offset": 14800.249
+    },
+    {
+      "lap": 361,
+      "offset": 14830.718
+    },
+    {
+      "lap": 362,
+      "offset": 14861.187
+    },
+    {
+      "lap": 363,
+      "offset": 14891.656
+    },
+    {
+      "lap": 364,
+      "offset": 14922.124
+    },
+    {
+      "lap": 365,
+      "offset": 14952.593
+    },
+    {
+      "lap": 366,
+      "offset": 14983.062
+    },
+    {
+      "lap": 367,
+      "offset": 15013.531
+    }
+  ],
+  "metadata": {
+    "official_duration_seconds": 14585.0,
+    "race_id": 5624,
+    "red_flag_delay_seconds": 459,
+    "series": "cup",
+    "timing": "estimated_from_leader_lap_times",
+    "total_laps": 367,
+    "track": "Darlington Raceway",
+    "year": 2026
+  },
+  "name": "Cook Out Southern 500 2026",
+  "source": "nascar",
+  "started_at": "2026-09-06T21:00:00+00:00",
+  "version": 1
+}

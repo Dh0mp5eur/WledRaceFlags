@@ -1,0 +1,30 @@
+# Notes de travail locales pour Claude Code (contiennent des détails de l'hébergement personnel)
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+
+# Outils de test du navigateur
+.playwright-mcp/
+
+# Python (tools/make-icons.py)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# Fichiers téléchargés depuis l'application et posés à la racine (enregistrements, export des réglages)
+/enregistrement-*.json
+/nascar-*.json
+/raceflags-config*.json
+
+# Fichiers d'éditeur et de système
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
