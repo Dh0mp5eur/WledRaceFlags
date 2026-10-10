@@ -39,6 +39,7 @@ Rien à installer, mais elle est servie en https alors que les WLED répondent e
 | Chrome, Edge (ordinateur, Android) | Fonctionne après avoir **accepté l'accès au réseau local** demandé par le navigateur à la première connexion à un WLED |
 | Firefox, Safari, tout navigateur sur iPhone ou iPad | Ne peut pas joindre les WLED : utilisez une installation locale (ci-dessous) |
 
+Le live **FIA WEC** ne fonctionne pas depuis la version en ligne (voir « Limites connues ») ; NASCAR, IMSA et les replays, si.
 Les appareils doivent être désignés par une adresse IP privée (`192.168.1.50`) ou un nom du réseau local (`wled-xxxx.local`, `wled.lan`).
 Si l'accès a été refusé, rétablissez-le dans les paramètres du site (icône à gauche de l'adresse), puis rechargez la page.
 L'application affiche un bandeau qui explique la situation quand les WLED sont bloqués.
@@ -171,7 +172,10 @@ plutôt que d'éditer les images.
 - L'onglet doit rester ouvert pendant la course. Les minuteurs passent par un Web Worker et un verrou d'écran est demandé
   pour limiter le bridage en arrière-plan.
 - Les flux de chronométrage sont publics mais non documentés : ils peuvent changer sans préavis. Leurs adresses sont modifiables dans les Réglages.
-- Le flux WEC dépend des en-têtes CORS envoyés par son serveur.
+- **Live FIA WEC : uniquement depuis `http://localhost`.** Le serveur du flux WEC n'autorise (CORS) que les pages ouvertes sur `localhost`
+  (n'importe quel port). Depuis la version en ligne, une adresse IP ou un nom comme `raceflags.lan`, le navigateur bloque le flux :
+  lancez l'application sur l'ordinateur qui regarde la course (`python3 -m http.server 8000`, puis `http://localhost:8000`).
+  NASCAR, IMSA et le replay fonctionnent partout.
 - Depuis une page publique (comme la version en ligne), Chrome et Edge demandent l'autorisation d'accéder au réseau local ; les autres navigateurs bloquent les WLED.
 
 ## Licence
