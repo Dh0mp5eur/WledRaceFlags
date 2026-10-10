@@ -1,54 +1,56 @@
 # WLED Race Flags
 
-Suivez les drapeaux d'une course automobile en direct et reproduisez-les sur vos bandes LED [WLED](https://kno.wled.ge/) :
-la pièce passe au jaune pendant une neutralisation, au rouge quand la course est arrêtée, et clignote en vert à la relance.
+[Français](README.fr.md) | **English**
 
-Championnats pris en charge : **NASCAR**, **FIA WEC** et **IMSA WeatherTech**.
+Follow the flags of a motor race live and mirror them on your [WLED](https://kno.wled.ge/) LED strips:
+the room turns yellow during a caution, red when the race is stopped, and blinks green at the restart.
 
-L'application tourne **entièrement dans le navigateur** : du HTML, du CSS et du JavaScript purs, sans build, sans dépendance
-et sans serveur applicatif. Il suffit de servir les fichiers (ou d'ouvrir `index.html`) sur un appareil du même réseau que vos WLED.
+Supported championships: **NASCAR**, **FIA WEC** and **IMSA WeatherTech**.
 
-> Interface en français.
+The application runs **entirely in the browser**: plain HTML, CSS and JavaScript, no build step, no dependency
+and no application server. Just serve the files (or open `index.html`) on a device on the same network as your WLEDs.
 
-## Fonctionnalités
+> Bilingual interface, English and French: the language follows your browser, and the **FR / EN** selector at the top right changes it at any time (your choice is remembered).
 
-- **Suivi en direct** des flux de chronométrage publics de NASCAR, du FIA WEC et d'IMSA.
-- **Effets sur la bande** :
-  - vert ou damier : clignotements verts, puis la main est rendue ;
-  - jaune et rouge : une seconde de couleur pleine, puis un effet « breathe » tant que le drapeau dure ;
-  - chaque effet peut être remplacé par un **preset WLED** de votre choix.
-- **Plusieurs appareils** pilotés en même temps, avec **détection sur le réseau local** ou ajout manuel (IP ou `wled-xxxx.local`).
-- **Rend la main proprement** : à l'arrêt (ou à la fermeture de l'onglet), la bande retrouve son état d'origine,
-  ou le contrôle revient à une autre source comme Hyperion.
-- **Démarrage en pleine course** : un vert déjà en cours ne fait pas clignoter la bande ; un jaune ou un rouge est appliqué tout de suite.
-- **Synchronisation avec la diffusion** : le chronométrage officiel est souvent en avance d'une minute ou plus sur la TV.
-  - NASCAR : synchronisation automatique à partir de la durée des tours ;
-  - WEC et IMSA : « Horloge de ma diffusion » à faire coïncider avec l'horloge affichée à l'écran, réglable pendant la course.
-- **Enregistrement et replay** : chaque suivi en direct peut être téléchargé en JSON et rejoué plus tard,
-  à partir d'un temps ou d'un tour, à vitesse variable, avec recalage en cours de replay.
-- **Archive NASCAR** : rejouez n'importe quelle course passée (Cup, Xfinity, Truck) directement depuis l'archive officielle, sans fichier.
-- Réglages enregistrés dans le navigateur, avec **export et import** en JSON. Thème clair ou sombre, utilisable sur téléphone.
+## Features
 
-## Version en ligne
+- **Live tracking** of the public timing feeds of NASCAR, FIA WEC and IMSA.
+- **Strip effects**:
+  - green or chequered flag: green blinks, then control is handed back;
+  - yellow and red: one second of solid color, then a “breathe” effect for as long as the flag lasts;
+  - each effect can be replaced by a **WLED preset** of your choice.
+- **Several devices** driven at once, with **discovery on the local network** or manual entry (IP or `wled-xxxx.local`).
+- **Hands control back cleanly**: when you stop (or close the tab), the strip returns to its original state,
+  or control goes back to another source such as Hyperion.
+- **Joining mid-race**: a green flag already showing does not make the strip blink; a yellow or red flag is applied immediately.
+- **Broadcast synchronization**: the official timing is often a minute or more ahead of TV.
+  - NASCAR: automatic synchronization based on lap times;
+  - WEC and IMSA: a “My broadcast clock” to match with the clock shown on your screen, adjustable during the race.
+- **Recording and replay**: every live session can be downloaded as JSON and replayed later,
+  from a given time or lap, at any speed, and re-aligned while it runs.
+- **NASCAR archive**: replay any past race (Cup, Xfinity, Truck) straight from the official archive, no file needed.
+- Settings saved in the browser, with JSON **export and import**. Light or dark theme, usable on a phone.
 
-L'application est publiée avec GitHub Pages : **<https://dh0mp5eur.github.io/WledRaceFlags/>**.
-Rien à installer, mais elle est servie en https alors que les WLED répondent en http, ce qui limite les navigateurs :
+## Online version
 
-| Navigateur | Version en ligne |
+The application is published with GitHub Pages: **<https://dh0mp5eur.github.io/WledRaceFlags/>**.
+Nothing to install, but it is served over https while WLEDs answer over http, which limits which browsers work:
+
+| Browser | Online version |
 |---|---|
-| Chrome, Edge (ordinateur, Android) | Fonctionne après avoir **accepté l'accès au réseau local** demandé par le navigateur à la première connexion à un WLED |
-| Firefox, Safari, tout navigateur sur iPhone ou iPad | Ne peut pas joindre les WLED : utilisez une installation locale (ci-dessous) |
+| Chrome, Edge (desktop, Android) | Works once you **allow local network access** when the browser asks, the first time it reaches a WLED |
+| Firefox, Safari, any browser on iPhone or iPad | Cannot reach the WLEDs: use a local installation (below) |
 
-Le live **FIA WEC** ne fonctionne pas depuis la version en ligne (voir « Limites connues ») ; NASCAR, IMSA et les replays, si.
-Les appareils doivent être désignés par une adresse IP privée (`192.168.1.50`) ou un nom du réseau local (`wled-xxxx.local`, `wled.lan`).
-Si l'accès a été refusé, rétablissez-le dans les paramètres du site (icône à gauche de l'adresse), puis rechargez la page.
-L'application affiche un bandeau qui explique la situation quand les WLED sont bloqués.
+**FIA WEC** live does not work from the online version (see “Known limitations”); NASCAR, IMSA and replays do.
+Devices must be given as a private IP address (`192.168.1.50`) or a local network name (`wled-xxxx.local`, `wled.lan`).
+If access was denied, restore it in the site settings (icon to the left of the address), then reload the page.
+The application shows a banner explaining the situation whenever the WLEDs are blocked.
 
-## Installation locale
+## Local installation
 
-Elle fonctionne avec tous les navigateurs.
+It works with every browser.
 
-Prérequis : un navigateur récent et au moins un appareil [WLED](https://kno.wled.ge/) sur le réseau local.
+Requirements: a recent browser and at least one [WLED](https://kno.wled.ge/) device on the local network.
 
 ```sh
 git clone https://github.com/Dh0mp5eur/WledRaceFlags.git
@@ -56,56 +58,56 @@ cd WledRaceFlags
 python3 -m http.server 8000
 ```
 
-Ouvrez ensuite `http://localhost:8000`, ou `http://<IP-du-PC>:8000` depuis un téléphone ou une tablette du même réseau.
+Then open `http://localhost:8000`, or `http://<PC-IP>:8000` from a phone or tablet on the same network.
 
-N'importe quel serveur de fichiers statiques convient. Ouvrir `index.html` directement (`file://`) fonctionne aussi,
-mais un serveur HTTP est préférable : la page a alors une vraie origine http, ce qui évite les cas particuliers des flux de course.
+Any static file server will do. Opening `index.html` directly (`file://`) also works,
+but an HTTP server is preferable: the page then has a real http origin, which avoids special cases with the race feeds.
 
-> **Servez la page en http, pas en https.** Les WLED répondent en http, et la plupart des navigateurs bloquent les appels en http
-> depuis une page en https (contenu mixte). Seuls Chrome et Edge l'acceptent, après autorisation (voir « Version en ligne »).
+> **Serve the page over http, not https.** WLEDs answer over http, and most browsers block http calls
+> made from an https page (mixed content). Only Chrome and Edge accept them, after permission (see “Online version”).
 
-## Utilisation
+## Usage
 
-L'application a trois vues, accessibles depuis la barre du haut.
+The application has three views, reachable from the top bar.
 
 ### 1. WLED
 
-- **Scanner le réseau** interroge `/json/info` sur chaque adresse du préfixe indiqué (par défaut `192.168.1.`, de 1 à 254).
-  Un navigateur ne connaît pas son propre sous-réseau et ne fait pas de mDNS : si la page est servie par une adresse IP privée,
-  le préfixe en est déduit, sinon indiquez le vôtre (il est mémorisé).
-- Ou ajoutez un appareil à la main par son adresse IP ou son nom.
-- Les boutons **Test** (vert, jaune, rouge) jouent chaque effet sur les appareils pour tout vérifier avant la course.
+- **Scan the network** queries `/json/info` on every address of the given prefix (`192.168.1.` by default, 1 to 254).
+  A browser knows neither its own subnet nor mDNS: if the page is served from a private IP address,
+  the prefix is deduced from it, otherwise enter yours (it is remembered).
+- Or add a device by hand with its IP address or name.
+- The **Test** buttons (Green, Yellow, Red, Chequered) play each effect on the devices so you can check everything before the race.
 
 ### 2. Race
 
-Choisissez le championnat avec les onglets. Chaque onglet a deux sections :
+Pick the championship with the tabs. Each tab has two sections:
 
-- **Live** : suit la course en cours. « Sans WLED » permet de suivre sans piloter la bande.
-- **Replay** : rejoue un enregistrement de ce championnat (un fichier téléchargé auparavant ou, pour NASCAR, une course de l'archive).
-  - *Départ (temps)* ou *Tour* : point de départ du replay (un tour à 0 signifie « partir du temps »).
-  - *Vitesse* et *délai vidéo* : pour caler le replay sur une vidéo.
-  - Pendant un replay, le bouton devient **Resynchroniser le replay** : il applique les nouveaux réglages sans relancer.
+- **Live**: follows the race in progress. “No WLED (watch only)” lets you follow without driving the strip.
+- **Replay**: replays a recording of that championship (a file downloaded earlier or, for NASCAR, a race from the archive).
+  - *Start (time)* or *Lap*: where the replay starts (a lap of 0 means “start from the time”).
+  - *Speed* and *Video delay*: to line the replay up with a video.
+  - While a replay runs, the button becomes **Resynchronize the replay**: it applies the new settings without restarting.
 
-Un enregistrement ne se rejoue que dans l'onglet de son championnat. Les données de l'archive NASCAR sont publiées
-quelques heures après l'arrivée d'une course.
+A recording can only be replayed in the tab of its own championship. NASCAR archive data is published
+a few hours after a race ends.
 
-**Caler les drapeaux sur votre TV (WEC et IMSA)** : l'« Horloge de ma diffusion » défile et montre l'heure que votre diffusion
-devrait afficher avec le retard actuel. Faites-la coïncider avec l'écran :
+**Matching the flags to your TV (WEC and IMSA)**: “My broadcast clock” runs and shows the time your broadcast
+should display with the current delay. Make it match your screen:
 
-- avec les boutons ▲ ▼ de chaque segment (ou les flèches du clavier) : le retard change aussitôt ;
-- ou en tapant l'heure lue à l'écran : l'horloge se fige au premier chiffre, Entrée valide, Échap annule.
+- with the ▲ ▼ buttons of each segment (or the keyboard arrows): the delay changes at once;
+- or by typing the time you read on screen: the clock freezes at the first digit, Enter confirms, Esc cancels.
 
-### 3. Réglages
+### 3. Settings
 
-Luminosité, nombre et durée des clignotements verts, presets WLED pour chaque drapeau, retour à l'état d'origine,
-délais réseau, paramètres de la synchronisation TV et adresses des flux. Chaque réglage a une bulle d'aide.
+Brightness, number and duration of the green blinks, WLED presets for each flag, restoring the original state,
+network timeouts, TV synchronization parameters and feed addresses. Every setting has a tooltip.
 
-## Hébergement permanent
+## Permanent hosting
 
-Pour garder l'application disponible sur le réseau local, servez les fichiers `index.html`, `css/`, `js/` et `img/`
-avec n'importe quel serveur statique. Les tests, les outils et la documentation ne sont pas nécessaires.
+To keep the application available on the local network, serve `index.html`, `css/`, `js/` and `img/`
+with any static server. Tests, tools and documentation are not needed.
 
-Exemple de `Caddyfile` (en http uniquement) :
+Example `Caddyfile` (http only):
 
 ```caddyfile
 http://raceflags.lan {
@@ -113,86 +115,96 @@ http://raceflags.lan {
     encode zstd gzip
     file_server
 
-    # La page est toujours revalidée ; les scripts et le CSS portent ?v=<empreinte>,
-    # leur adresse change à chaque mise à jour.
+    # The page is always revalidated; scripts and CSS carry ?v=<fingerprint>,
+    # so their address changes with every update.
     @page path / /index.html
     header @page Cache-Control "no-cache"
-    @versionnes path /js/* /css/*
-    header @versionnes Cache-Control "public, max-age=31536000, immutable"
+    @versioned path /js/* /css/*
+    header @versioned Cache-Control "public, max-age=31536000, immutable"
 }
 ```
 
-Copie vers le serveur, par exemple avec `rsync` (ajoutez `-n -i` pour une simulation) :
+Copy to the server, for example with `rsync` (add `-n -i` for a dry run):
 
 ```sh
 node tools/cache-bust.js
-rsync -a --no-owner --no-group --checksum --delete index.html css js img utilisateur@serveur:/var/www/raceflags/
+rsync -a --no-owner --no-group --checksum --delete index.html css js img user@server:/var/www/raceflags/
 ```
 
-## Développement
+## Development
 
 ```
-index.html          Page unique (vues WLED, Race, Réglages)
-css/app.css         Styles, thèmes clair et sombre
-js/core.js          Drapeaux, erreurs, horloge, minuteurs non bridés (Web Worker)
-js/sources/         Une source par flux : nascar.js, wec.js, imsa.js, replay.js
-js/engine.js        Boucle de suivi : changements de drapeau, reprises sur erreur, retard
-js/sync.js          Synchronisation avec la diffusion (par tour ou retard fixe)
-js/wled.js          Client WLED et effets des drapeaux
-js/discovery.js     Détection des WLED sur le réseau
-js/recording.js     Enregistrement et format de replay
-js/nascar-import.js Import depuis l'archive NASCAR
-js/settings.js      Valeurs par défaut, validation, stockage local
-js/ui.js            Interface (seul fichier qui touche au DOM)
-img/                Icônes de l'application et logos des championnats
-tests/              Tests Node sans dépendance, avec un enregistrement d'exemple
-tools/              cache-bust.js (empreintes anti-cache), make-icons.py (icônes)
+index.html          Single page (WLED, Race and Settings views)
+css/app.css         Styles, light and dark themes
+js/core.js          Flags, errors, clock, unthrottled timers (Web Worker)
+js/i18n.js          Translations: RF.t(), current language, formats
+js/i18n/            One dictionary per language: fr.js, en.js
+js/sources/         One source per feed: nascar.js, wec.js, imsa.js, replay.js
+js/engine.js        Tracking loop: flag changes, retries on error, delay
+js/sync.js          Broadcast synchronization (per lap or fixed delay)
+js/wled.js          WLED client and flag effects
+js/discovery.js     WLED discovery on the network
+js/recording.js     Recording and replay format
+js/nascar-import.js Import from the NASCAR archive
+js/settings.js      Defaults, validation, local storage
+js/ui.js            User interface (the only file that touches the DOM)
+img/                Application icons and championship logos
+tests/              Dependency-free Node tests, with a sample recording
+tools/              cache-bust.js (cache fingerprints), make-icons.py (icons)
 ```
 
-Principes :
+Principles:
 
-- Scripts classiques `<script defer>` qui partagent l'espace de noms global `RF`, sans modules ES, pour que l'ouverture en `file://` fonctionne.
-- Les commandes WLED partent en `POST` de type `text/plain` (requête « simple », sans pré-vérification CORS).
-- Une nouvelle source de données est un fichier `js/sources/<nom>.js` qui expose `poll()`, `setSignal()` et `close()`.
+- Classic `<script defer>` scripts sharing the global `RF` namespace, no ES modules, so that opening from `file://` works.
+- WLED commands are sent as `text/plain` `POST` requests (a “simple” request, no CORS preflight).
+- A new data source is a `js/sources/<name>.js` file exposing `poll()`, `setSignal()` and `close()`.
+- **No hard-coded visible text**: labels, messages and tooltips go through `RF.t('key')` (code) or `data-i18n` (HTML), with the key in every dictionary of `js/i18n/`.
+  A test checks that all languages have the same keys and that no text was left hard-coded.
 
-Tests (Node.js, aucune installation) :
+Tests (Node.js, nothing to install):
 
 ```sh
 node tests/run.js
 ```
 
-**Après toute modification de `js/` ou `css/`**, relancez `node tools/cache-bust.js` : il recalcule le paramètre `?v=<empreinte>`
-des balises d'`index.html`, pour qu'un navigateur ne mélange jamais anciens et nouveaux fichiers. Un test échoue si l'empreinte est périmée.
+**After any change to `js/` or `css/`**, run `node tools/cache-bust.js` again: it recomputes the `?v=<fingerprint>` parameter
+of the tags in `index.html`, so a browser never mixes old and new files. A test fails if the fingerprint is stale.
 
-Les icônes de l'application sont générées par `tools/make-icons.py` (Python et `cairosvg`) : modifiez le script et relancez-le
-plutôt que d'éditer les images.
+### Adding a language
 
-## Limites connues
+1. Copy `js/i18n/en.js` to `js/i18n/<code>.js` (for example `es.js`), change the code in `RF.addMessages('<code>', …)` and translate the texts (keep the `{variables}`; plurals are `{ one, other }` objects).
+2. Add the code to `RF.LANGUAGES` (`js/i18n.js`) and the `<script defer src="js/i18n/<code>.js">` tag to `index.html`, after the other dictionaries.
+3. Run `node tools/cache-bust.js` then `node tests/run.js`: the tests list missing keys and tooltips that are too long (220 characters at most).
 
-- L'onglet doit rester ouvert pendant la course. Les minuteurs passent par un Web Worker et un verrou d'écran est demandé
-  pour limiter le bridage en arrière-plan.
-- Les flux de chronométrage sont publics mais non documentés : ils peuvent changer sans préavis. Leurs adresses sont modifiables dans les Réglages.
-- **Live FIA WEC : uniquement depuis `http://localhost`.** Le serveur du flux WEC n'autorise (CORS) que les pages ouvertes sur `localhost`
-  (n'importe quel port). Depuis la version en ligne, une adresse IP ou un nom comme `raceflags.lan`, le navigateur bloque le flux :
-  lancez l'application sur l'ordinateur qui regarde la course (`python3 -m http.server 8000`, puis `http://localhost:8000`).
-  NASCAR, IMSA et le replay fonctionnent partout.
-- Depuis une page publique (comme la version en ligne), Chrome et Edge demandent l'autorisation d'accéder au réseau local ; les autres navigateurs bloquent les WLED.
+The application icons are generated by `tools/make-icons.py` (Python and `cairosvg`): edit the script and rerun it
+rather than editing the images.
 
-## Licence
+## Known limitations
+
+- The tab must stay open during the race. Timers run in a Web Worker and a screen wake lock is requested
+  to limit background throttling.
+- The timing feeds are public but undocumented: they can change without notice. Their addresses can be edited in Settings.
+- **FIA WEC live: only from `http://localhost`.** The WEC feed server only allows (CORS) pages opened on `localhost`
+  (any port). From the online version, an IP address or a name such as `raceflags.lan`, the browser blocks the feed:
+  run the application on the computer that watches the race (`python3 -m http.server 8000`, then `http://localhost:8000`).
+  NASCAR, IMSA and replay work everywhere.
+- From a public page (such as the online version), Chrome and Edge ask for permission to access the local network; other browsers block the WLEDs.
+
+## License
 
 Copyright © 2026 Dhomps Florian.
 
-Ce projet est un logiciel libre, distribué sous la licence **GNU General Public License v3.0** (voir [`LICENSE`](LICENSE)).
-Vous pouvez l'utiliser, l'étudier, le modifier et le redistribuer, y compris dans une version améliorée.
-Toute version redistribuée, modifiée ou non, doit rester sous GPL-3.0 et être accompagnée de son code source.
+This project is free software, released under the **GNU General Public License v3.0** (see [`LICENSE`](LICENSE)).
+You may use, study, modify and redistribute it, including in an improved version.
+Any redistributed version, modified or not, must remain under GPL-3.0 and come with its source code.
 
-Les logos des championnats (`img/nascar.svg`, `img/wec.svg`, `img/imsa.svg`) ne sont pas couverts par cette licence (voir ci-dessous).
+The championship logos (`img/nascar.svg`, `img/wec.svg`, `img/imsa.svg`) are not covered by this license (see below).
 
-## Mentions
+## Notices
 
-Les logos NASCAR, FIA WEC et IMSA affichés dans les onglets proviennent de Wikimedia Commons (domaine public pour le droit d'auteur,
-détails dans [`img/README.md`](img/README.md)). Ce sont des **marques déposées** de leurs propriétaires, utilisées uniquement pour identifier
-le championnat suivi.
+The NASCAR, FIA WEC and IMSA logos shown in the tabs come from Wikimedia Commons (public domain as far as copyright goes,
+details in [`img/README.md`](img/README.md)). They are **registered trademarks** of their owners, used only to identify
+the championship being followed.
 
-Ce projet est indépendant : il n'est affilié ni à NASCAR, ni à la FIA, à l'ACO ou à IMSA, ni au projet WLED.
-Les données de course appartiennent à leurs éditeurs ; l'application ne fait que lire les flux publics depuis votre navigateur.
+This project is independent: it is not affiliated with NASCAR, the FIA, the ACO or IMSA, nor with the WLED project.
+Race data belongs to its publishers; the application only reads the public feeds from your browser.
