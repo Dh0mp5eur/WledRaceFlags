@@ -28,8 +28,8 @@
   var JSONP_CALLBACK = 'jsonpSessionInfo';
   function loadJsonp(url, timeoutMs, signal) {
     return new Promise(function (resolve, reject) {
-      if (typeof document === 'undefined' || !document.head) return reject(new Error('JSONP indisponible'));
-      if (signal && signal.aborted) return reject(new Error('annulé'));
+      if (typeof document === 'undefined' || !document.head) return reject(new Error(RF.t('err.imsa.jsonpUnavailable')));
+      if (signal && signal.aborted) return reject(new Error(RF.t('err.imsa.cancelled')));
       var script = document.createElement('script'), done = false, timer;
       function finish(err, data) {
         if (done) return;
@@ -40,11 +40,11 @@
         if (script.parentNode) script.parentNode.removeChild(script);
         if (err) reject(err); else resolve(data);
       }
-      function onAbort() { finish(new Error('annulé')); }
+      function onAbort() { finish(new Error(RF.t('err.imsa.cancelled'))); }
       if (signal) signal.addEventListener('abort', onAbort);
       root[JSONP_CALLBACK] = function (data) { finish(null, data); };
-      script.onerror = function () { finish(new Error('chargement du script impossible')); };
-      timer = setTimeout(function () { finish(new Error('délai dépassé (' + Math.round(timeoutMs / 100) / 10 + ' s)')); }, timeoutMs);
+      script.onerror = function () { finish(new Error(RF.t('err.imsa.scriptFailed'))); };
+      timer = setTimeout(function () { finish(new Error(RF.t('err.core.timeout', { seconds: Math.round(timeoutMs / 100) / 10 }))); }, timeoutMs);
       script.async = true;
       script.src = url + (url.indexOf('?') === -1 ? '?' : '&') + '_=' + Date.now();
       document.head.appendChild(script);
@@ -65,18 +65,18 @@
   ImsaSource.prototype.poll = function () {
     var self = this;
     return self._load().then(function (info) {
-      if (!info || typeof info !== 'object' || Array.isArray(info)) throw RF.SourceError("Le flux IMSA n'est pas un objet JSON");
+      if (!info || typeof info !== 'object' || Array.isArray(info)) throw RF.SourceError(RF.t('err.imsa.notObject'));
       var session = info.S || '';
       var remaining = info.TR ? RF.parseDuration(info.TR) : null;
       var meta = { event_name: info.E || null, session_name: session || null, track: info.T || null, flag_text: info.F || null,
                    elapsed: info.TT || null };
       var flag = resolveFlag(info.F), raw = info.F == null ? null : info.F;
-      if (self._raceOnly && !isRaceSession(session)) { flag = F.UNKNOWN; raw = 'session sans course: ' + (session || 'inconnue'); }
+      if (self._raceOnly && !isRaceSession(session)) { flag = F.UNKNOWN; raw = RF.t('err.imsa.notRace', { session: session || RF.t('err.imsa.unknownSession') }); }
       return RF.makeSnapshot({ source: self.name, flag: flag, rawState: raw, lap: optionalInt(info.L),
                                remainingSeconds: remaining, metadata: meta });
     }, function (e) {
       if (e && e.name === 'SourceError') throw e;
-      throw RF.SourceError('Impossible de lire le flux IMSA: ' + (e && e.message || e));
+      throw RF.SourceError(RF.t('err.imsa.readFailed', { detail: e && e.message || e }));
     });
   };
   /* JSONP d'abord (navigateur), puis JSON direct si la balise script échoue ; JSON direct seul hors navigateur. */

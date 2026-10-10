@@ -15,9 +15,9 @@
 
   function optionalInt(value, field) {
     if (value == null) return null;
-    if (typeof value === 'boolean') throw RF.SourceError('Champ WEC invalide: ' + field + '=' + value);
+    if (typeof value === 'boolean') throw RF.SourceError(RF.t('err.wec.badField', { field: field, value: value }));
     var n = parseInt(value, 10);
-    if (isNaN(n)) throw RF.SourceError('Champ WEC invalide: ' + field + '=' + JSON.stringify(value));
+    if (isNaN(n)) throw RF.SourceError(RF.t('err.wec.badField', { field: field, value: JSON.stringify(value) }));
     return n;
   }
   function normalizeFlag(v) {
@@ -82,12 +82,12 @@
   WecSource.prototype.setSignal = function (s) { this._signal = s; };
   WecSource.prototype._get = function (path) {
     return RF.fetchJson(this._api + path, { headers: { Accept: 'application/json' } }, this._timeoutMs, this._signal)
-      .catch(function (e) { throw RF.SourceError('Impossible de lire le flux WEC: ' + (e && e.message || e)); });
+      .catch(function (e) { throw RF.SourceError(RF.t('err.wec.readFailed', { detail: e && e.message || e })); });
   };
   WecSource.prototype._discover = function () {
     var self = this;
     return self._get('/live/session-info/?includeViewers=false').then(function (sessions) {
-      if (!Array.isArray(sessions)) throw RF.SourceError('La liste des sessions WEC actives est invalide');
+      if (!Array.isArray(sessions)) throw RF.SourceError(RF.t('err.wec.badSessions'));
       var best = null;
       sessions.forEach(function (item) {
         if (!item || typeof item !== 'object') return;
@@ -98,7 +98,7 @@
         var start = String(item.startTime || '');
         if (!best || start >= best.start) best = { start: start, sid: sid, item: item };
       });
-      if (!best) throw RF.SourceError('Aucune course active trouvée pour "' + self._series + '"; indiquez un identifiant de session si connu');
+      if (!best) throw RF.SourceError(RF.t('err.wec.noRace', { series: self._series }));
       self._sessionId = best.sid;
       self._meta = sessionMetadata(best.item);
     });
@@ -106,7 +106,7 @@
   WecSource.prototype._liveStatus = function () {
     var self = this;
     return self._get('/meta/sessions-schedule-live').then(function (sessions) {
-      if (!Array.isArray(sessions)) return { flags: null, remaining: null, error: 'Le planning live WEC n\'est pas une liste JSON' };
+      if (!Array.isArray(sessions)) return { flags: null, remaining: null, error: RF.t('err.wec.badSchedule') };
       for (var i = 0; i < sessions.length; i++) {
         var item = sessions[i];
         if (!item || typeof item !== 'object' || sessionId(item) !== self._sessionId) continue;
@@ -122,9 +122,9 @@
       if (st.flags) return st;
       return self._get('/live/race-flags/' + self._sessionId).then(function (flags) { st.flags = flags; return st; });
     }).then(function (st) {
-      if (!Array.isArray(st.flags)) throw RF.SourceError('Le flux de drapeaux WEC n\'est pas une liste JSON');
+      if (!Array.isArray(st.flags)) throw RF.SourceError(RF.t('err.wec.badFlags'));
       var entry = latestTrackFlag(st.flags);
-      if (!entry) throw RF.SourceError('Aucun drapeau piste entière pour la session WEC ' + self._sessionId);
+      if (!entry) throw RF.SourceError(RF.t('err.wec.noTrackFlag', { id: self._sessionId }));
       var meta = Object.assign({}, self._meta, { session_id: self._sessionId, race_flag_id: entry.raceFlagID, flag_info: entry.info || '' });
       if (st.elapsed != null) meta.elapsed = st.elapsed;
       if (st.error) meta.progress_error = st.error;

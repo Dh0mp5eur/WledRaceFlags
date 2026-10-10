@@ -5,8 +5,8 @@
   var F = RF.FlagState;
 
   function progressSuffix(ev) {
-    if (ev.remainingSeconds != null) return ' restant=' + RF.formatDuration(ev.remainingSeconds);
-    if (ev.lap != null) return ' tour=' + ev.lap;
+    if (ev.remainingSeconds != null) return RF.t('engine.suffixRemaining', { time: RF.formatDuration(ev.remainingSeconds) });
+    if (ev.lap != null) return RF.t('engine.suffixLap', { lap: ev.lap });
     return '';
   }
 
@@ -30,22 +30,22 @@
     function finish() {
       self.delayed.clear();
       try { self.source.close(); } catch (e) {}
-      self.observers.forEach(function (o) { try { o.close(); } catch (e) { self.log('error', '[ERREUR ENREGISTREMENT] ' + e.message); } });
-      return Promise.resolve(self.output.close()).catch(function (e) { self.log('error', '[ERREUR SORTIE] ' + e.message); });
+      self.observers.forEach(function (o) { try { o.close(); } catch (e) { self.log('error', RF.t('engine.recorderError', { detail: e.message })); } });
+      return Promise.resolve(self.output.close()).catch(function (e) { self.log('error', RF.t('log.outputError', { detail: e.message })); });
     }
     function loop() {
       if (signal.aborted) return;
       return self._applyReady().then(function () {
-        try { self.output.checkHealth(); } catch (e) { self.log('error', '[ERREUR SORTIE] ' + e.message); }
+        try { self.output.checkHealth(); } catch (e) { self.log('error', RF.t('log.outputError', { detail: e.message })); }
         return self.source.poll().then(function (snapshot) {
           errorDelay = Math.max(self.pollInterval, 0.1);
           self.onProgress(snapshot);
           return self._process(snapshot).then(function () { return self._sleep(self.pollInterval); });
         }, function (e) {
           if (RF.isError(e, 'SourceNotReady')) return self._sleep(e.waitSeconds);
-          if (RF.isError(e, 'SourceFinished')) { self.log('info', '[SOURCE] Fin de la source'); self.finished = true; return; }
+          if (RF.isError(e, 'SourceFinished')) { self.log('info', RF.t('engine.sourceEnded')); self.finished = true; return; }
           if (signal.aborted) return;
-          self.log('error', '[ERREUR SOURCE] ' + (e && e.message || e));
+          self.log('error', RF.t('engine.sourceError', { detail: e && e.message || e }));
           var d = errorDelay; errorDelay = Math.min(errorDelay * 2, 60);
           return self._sleep(d);
         });
@@ -75,7 +75,7 @@
     var event = RF.eventFromSnapshot(snapshot);
     self.observers.forEach(function (o) { o.onEvent(event); });
     if (snapshot.flag === F.UNKNOWN) {
-      self.log('warn', '[AVERTISSEMENT] État inconnu ' + JSON.stringify(snapshot.rawState) + '; le dernier état WLED est conservé');
+      self.log('warn', RF.t('engine.unknownState', { state: JSON.stringify(snapshot.rawState) }));
       return Promise.resolve();
     }
     /* Un vert ou un damier qui n'est pas annoncé n'est pas un événement : aucun effet.
@@ -88,7 +88,7 @@
     var delay = self.sync ? self.sync.delaySeconds(snapshot, self.clock(), first) : 0;
     if (delay > 0) {
       self.delayed.schedule(event, delay, self.clock());
-      self.log('info', '[LIVE] ' + event.flag + progressSuffix(event) + '; application dans ' + Math.round(delay) + ' s');
+      self.log('info', RF.t('engine.scheduled', { flag: event.flag, progress: progressSuffix(event), seconds: Math.round(delay) }));
       return Promise.resolve();
     }
     return self._apply(event);
@@ -99,10 +99,9 @@
     var self = this, held = self.lastApplied === F.YELLOW || self.lastApplied === F.RED;
     self.lastApplied = event.flag;
     self.onFlag(event);
-    self.log('info', (seek ? '[REPLAY] drapeau ' + event.flag + ' au point de départ' : '[LIVE] drapeau ' + event.flag + ' déjà en cours au démarrage') + progressSuffix(event) +
-      ' : aucun effet' + (held ? ', l\'effet précédent est arrêté' : ''));
+    self.log('info', RF.t(seek ? 'engine.quietReplay' : 'engine.quietLive', { flag: event.flag, progress: progressSuffix(event), held: held ? RF.t('engine.heldStopped') : '' }));
     if (!held) return Promise.resolve();
-    return Promise.resolve(self.output.release()).then(null, function (err) { self.log('error', '[ERREUR SORTIE] ' + err.message); });
+    return Promise.resolve(self.output.release()).then(null, function (err) { self.log('error', RF.t('log.outputError', { detail: err.message })); });
   };
   RaceFlagEngine.prototype._applyReady = function () {
     var ev = this.delayed.popLatestReady(this.clock());
@@ -115,7 +114,7 @@
       self.lastApplied = event.flag;
       self.onFlag(event);
       self.log('flag', '[FLAG] ' + event.flag + progressSuffix(event));
-    }, function (e) { self.log('error', '[ERREUR SORTIE] ' + e.message); });
+    }, function (e) { self.log('error', RF.t('log.outputError', { detail: e.message })); });
   };
 
   RF.RaceFlagEngine = RaceFlagEngine;

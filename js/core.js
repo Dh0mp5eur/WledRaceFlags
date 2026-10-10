@@ -22,7 +22,7 @@
   RF.OutputError = makeError('OutputError');
   RF.SourceFinished = makeError('SourceFinished');
   RF.SourceNotReady = function (waitSeconds) {
-    var e = new Error('Aucun événement prêt');
+    var e = new Error(RF.t('err.core.notReady'));
     e.name = 'SourceNotReady';
     e.waitSeconds = Math.max(0, waitSeconds);
     return e;
@@ -101,7 +101,7 @@
       if (!res.ok) throw new Error('HTTP ' + res.status);
       return res.json();
     }).catch(function (e) {
-      if (timedOut) throw new Error('délai dépassé (' + Math.round(timeoutMs / 1000 * 10) / 10 + ' s)');
+      if (timedOut) throw new Error(RF.t('err.core.timeout', { seconds: Math.round(timeoutMs / 1000 * 10) / 10 }));
       throw e;
     }).then(function (v) { cleanup(); return v; }, function (e) { cleanup(); throw e; });
     function cleanup() {

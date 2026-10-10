@@ -7,9 +7,9 @@
   var SERIES = { cup: 1, xfinity: 2, truck: 3 };
   var HIST = { 1: F.GREEN, 2: F.YELLOW, 3: F.RED, 4: F.CHEQUERED, 5: F.CHEQUERED, 7: F.YELLOW };
 
-  function positiveInt(v, label) {
+  function positiveInt(v, key) {
     var n = typeof v === 'boolean' ? NaN : parseInt(v, 10);
-    if (!(n > 0)) throw new Error('Le ' + label + ' NASCAR est invalide');
+    if (!(n > 0)) throw new Error(RF.t(key));
     return n;
   }
   function parseRaceDuration(v) {
@@ -55,7 +55,7 @@
     return out;
   }
   function lapOffsets(data, totalLaps, official) {
-    if (!data || !Array.isArray(data.laps)) throw new Error('Les temps au tour NASCAR sont invalides');
+    if (!data || !Array.isArray(data.laps)) throw new Error(RF.t('err.import.badLaps'));
     var byLap = {};
     data.laps.forEach(function (driver) {
       if (!driver || !Array.isArray(driver.Laps)) return;
@@ -68,7 +68,7 @@
     });
     var known = [];
     Object.keys(byLap).forEach(function (l) { byLap[l].forEach(function (r) { known.push(r[1]); }); });
-    if (!known.length) throw new Error('Aucun temps au tour NASCAR exploitable');
+    if (!known.length) throw new Error(RF.t('err.import.noLaps'));
     var fallback = RF.median(known), durations = [];
     for (var lap = 1; lap <= totalLaps; lap++) {
       var rows = byLap[lap] || [];
@@ -95,22 +95,22 @@
     return new Date();
   }
   function findRace(data, seriesId, raceId) {
-    if (!data || typeof data !== 'object') throw new Error('La liste des courses NASCAR est invalide');
+    if (!data || typeof data !== 'object') throw new Error(RF.t('err.import.badRaceList'));
     var races = data['series_' + seriesId];
-    if (!Array.isArray(races)) throw new Error('La série NASCAR est absente de la liste des courses');
+    if (!Array.isArray(races)) throw new Error(RF.t('err.import.noSeries'));
     for (var i = 0; i < races.length; i++) if (races[i] && races[i].race_id === raceId) return races[i];
-    throw new Error('Course NASCAR ' + raceId + ' introuvable');
+    throw new Error(RF.t('err.import.raceNotFound', { id: raceId }));
   }
   function round3(x) { return Math.round(x * 1000) / 1000; }
 
   function buildRecording(o) {
     var race = o.race, lapTimes = o.lapTimes, lapNotes = o.lapNotes;
-    var totalLaps = positiveInt(race.actual_laps || race.scheduled_laps, 'nombre de tours');
+    var totalLaps = positiveInt(race.actual_laps || race.scheduled_laps, 'err.import.badLapCount');
     var official = parseRaceDuration(race.total_race_time);
     var offsets = lapOffsets(lapTimes, totalLaps, official);
     var notes = notesByLap(lapNotes), delays = redFlagDelays(lapNotes);
     var rawFlags = lapTimes && lapTimes.flags;
-    if (!Array.isArray(rawFlags)) throw new Error('La chronologie des drapeaux NASCAR est absente');
+    if (!Array.isArray(rawFlags)) throw new Error(RF.t('err.import.noFlags'));
     var start = raceStartTime(race);
     var byLap = {};
     rawFlags.forEach(function (it) {
@@ -126,7 +126,7 @@
       if (flag === F.UNKNOWN || flag === previous) return;
       transitions.push([lap, raw, flag]); previous = flag;
     });
-    if (!transitions.length) throw new Error('Aucune transition de drapeau NASCAR exploitable');
+    if (!transitions.length) throw new Error(RF.t('err.import.noTransitions'));
     if (transitions[0][2] === F.GREEN) transitions[0] = [0, transitions[0][1], transitions[0][2]];
     if (transitions[transitions.length - 1][2] !== F.CHEQUERED) transitions.push([totalLaps, 4, F.CHEQUERED]);
 
@@ -158,11 +158,11 @@
   /* Télécharge les trois fichiers d'archive et construit l'enregistrement. */
   RF.importNascarRace = function (o) {
     var year = parseInt(o.year, 10), raceId = parseInt(o.raceId, 10), seriesId = SERIES[o.series];
-    if (!(year >= 2000 && year <= 2100)) return Promise.reject(new Error("L'année NASCAR est invalide"));
-    if (!seriesId) return Promise.reject(new Error('Série NASCAR inconnue: ' + o.series));
-    if (!(raceId > 0)) return Promise.reject(new Error("L'identifiant de course doit être supérieur à zéro"));
+    if (!(year >= 2000 && year <= 2100)) return Promise.reject(new Error(RF.t('err.import.badYear')));
+    if (!seriesId) return Promise.reject(new Error(RF.t('err.import.unknownSeries', { series: o.series })));
+    if (!(raceId > 0)) return Promise.reject(new Error(RF.t('err.import.badRaceId')));
     var base = (o.base || ARCHIVE) + '/' + year;
-    function get(url) { return RF.fetchJson(url, {}, 30000).catch(function (e) { throw new Error('Impossible de télécharger ' + url + ': ' + e.message); }); }
+    function get(url) { return RF.fetchJson(url, {}, 30000).catch(function (e) { throw new Error(RF.t('err.import.download', { url: url, detail: e.message })); }); }
     return get(base + '/race_list_basic.json').then(function (list) {
       var race = findRace(list, seriesId, raceId);
       return Promise.all([get(base + '/' + seriesId + '/' + raceId + '/lap-times.json'),
@@ -176,21 +176,21 @@
   RF.listNascarRaces = function (year, series, opts) {
     opts = opts || {};
     var seriesId = SERIES[series], y = parseInt(year, 10);
-    if (!(y >= 2000 && y <= 2100)) return Promise.reject(new Error("L'année NASCAR est invalide"));
-    if (!seriesId) return Promise.reject(new Error('Série NASCAR inconnue: ' + series));
+    if (!(y >= 2000 && y <= 2100)) return Promise.reject(new Error(RF.t('err.import.badYear')));
+    if (!seriesId) return Promise.reject(new Error(RF.t('err.import.unknownSeries', { series: series })));
     var now = opts.now == null ? Date.now() : opts.now;
     return RF.fetchJson((opts.base || ARCHIVE) + '/' + y + '/race_list_basic.json', {}, 30000).then(function (list) {
       var races = list && list['series_' + seriesId];
-      if (!Array.isArray(races)) throw new Error('Aucune course NASCAR pour cette série et cette année');
+      if (!Array.isArray(races)) throw new Error(RF.t('err.import.noRaces'));
       return races.filter(function (r) {
         if (!r || !r.race_id || typeof r.race_date !== 'string') return false;
         var t = Date.parse(r.race_date.slice(0, 19) + '-05:00');
         return !isNaN(t) && t <= now;
       }).map(function (r) {
-        return { id: r.race_id, name: String(r.race_name || 'Course ' + r.race_id), track: r.track_name || '', date: r.race_date.slice(0, 10),
+        return { id: r.race_id, name: String(r.race_name || RF.t('err.import.raceName', { id: r.race_id })), track: r.track_name || '', date: r.race_date.slice(0, 10),
                  laps: r.actual_laps || r.scheduled_laps || null };
       }).sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.id - a.id; });
-    }, function (e) { throw new Error('Impossible de lire la liste des courses NASCAR: ' + (e && e.message || e)); });
+    }, function (e) { throw new Error(RF.t('err.import.listFailed', { detail: e && e.message || e })); });
   };
   RF.buildNascarRecording = buildRecording;
 })(typeof window !== 'undefined' ? window : global);

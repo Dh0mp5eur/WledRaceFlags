@@ -7,8 +7,9 @@
 <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="img/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
-<script>try{var t=localStorage.getItem("raceflags.theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-<link rel="stylesheet" href="css/app.css?v=b441686c16">
+<script>try{var d=document.documentElement,t=localStorage.getItem("raceflags.theme");if(t==="dark"||t==="light")d.setAttribute("data-theme",t)}catch(e){}
+try{var l=localStorage.getItem("raceflags.lang"),n=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language];if(!l)l=String(n[0]||"en").toLowerCase().split("-")[0];d.lang=l;if(l!=="fr"){d.className+=" i18n-pending";setTimeout(function(){d.className=d.className.replace(" i18n-pending","")},2000)}}catch(e){}</script>
+<link rel="stylesheet" href="css/app.css?v=133318bb28">
 </head>
 <body>
 <header>
@@ -16,49 +17,52 @@
   <nav id="nav">
     <a href="#/wled" data-route="wled"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>WLED</a>
     <a href="#/race" data-route="race"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V3"/><rect x="5" y="4" width="14" height="9" stroke-width="1.5"/><rect x="5.0" y="4" width="3.5" height="3" fill="currentColor" stroke="none"/><rect x="12.0" y="4" width="3.5" height="3" fill="currentColor" stroke="none"/><rect x="8.5" y="7" width="3.5" height="3" fill="currentColor" stroke="none"/><rect x="15.5" y="7" width="3.5" height="3" fill="currentColor" stroke="none"/><rect x="5.0" y="10" width="3.5" height="3" fill="currentColor" stroke="none"/><rect x="12.0" y="10" width="3.5" height="3" fill="currentColor" stroke="none"/></svg>Race</a>
-    <a href="#/settings" data-route="settings"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>Réglages</a>
+    <a href="#/settings" data-route="settings"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><span data-i18n="nav.settings">Réglages</span></a>
   </nav>
-  <div id="flag-badge" class="flag idle">arrêté</div>
+  <div class="header-end">
+    <select id="lang-select" data-i18n-attr="aria-label:nav.language;title:nav.language"></select>
+    <div id="flag-badge" class="flag idle">arrêté</div>
+  </div>
 </header>
 <main>
   <section class="view" data-view="wled" hidden>
-    <h2>Appareils WLED</h2>
+    <h2 data-i18n="wled.title">Appareils WLED</h2>
     <p class="notice local-access-notice" role="status" hidden></p>
     <div id="devices-panel">
-      <p class="hint">Cochez les appareils à piloter. Ils sont enregistrés dans ce navigateur et reçoivent tous les drapeaux.</p>
-      <table id="devices"><thead><tr><th></th><th>Nom</th><th>Adresse</th><th>État</th><th></th></tr></thead><tbody></tbody></table>
+      <p class="hint" data-i18n="wled.hint">Cochez les appareils à piloter. Ils sont enregistrés dans ce navigateur et reçoivent tous les drapeaux.</p>
+      <table id="devices"><thead><tr><th></th><th data-i18n="wled.col.name">Nom</th><th data-i18n="wled.col.address">Adresse</th><th data-i18n="wled.col.state">État</th><th></th></tr></thead><tbody></tbody></table>
       <div class="row">
-        <label>Ajouter (IP ou nom) <input id="add-host" type="text" placeholder="192.168.1.50 ou wled-xxxx.local"></label>
-        <button id="btn-add">Ajouter</button>
-        <button id="btn-check">Vérifier tous</button>
+        <label><span data-i18n="wled.add.label">Ajouter (IP ou nom)</span> <input id="add-host" type="text" data-i18n-attr="placeholder:wled.add.placeholder"></label>
+        <button id="btn-add" data-i18n="wled.add.button">Ajouter</button>
+        <button id="btn-check" data-i18n="wled.checkAll">Vérifier tous</button>
       </div>
       <div class="row">
-        <label>Réseau <input id="scan-prefix" type="text" size="12" placeholder="192.168.1."></label>
-        <label>de <input id="scan-from" type="number" min="0" max="255" style="width:4.5em"></label>
-        <label>à <input id="scan-to" type="number" min="0" max="255" style="width:4.5em"></label>
-        <button id="btn-scan">Scanner le réseau</button>
-        <button id="btn-scan-cancel" hidden>Annuler</button>
+        <label><span data-i18n="wled.scan.network">Réseau</span> <input id="scan-prefix" type="text" size="12" placeholder="192.168.1."></label>
+        <label><span data-i18n="wled.scan.from">de</span> <input id="scan-from" type="number" min="0" max="255" style="width:4.5em"></label>
+        <label><span data-i18n="wled.scan.to">à</span> <input id="scan-to" type="number" min="0" max="255" style="width:4.5em"></label>
+        <button id="btn-scan" data-i18n="wled.scan.button">Scanner le réseau</button>
+        <button id="btn-scan-cancel" hidden data-i18n="wled.scan.cancel">Annuler</button>
         <span id="scan-status" class="hint"></span>
       </div>
       <div class="row">
-        <button id="btn-confirm" class="primary">Utiliser cette sélection</button>
+        <button id="btn-confirm" class="primary" data-i18n="wled.confirm">Utiliser cette sélection</button>
         <span id="confirm-error" class="error"></span>
       </div>
     </div>
     <div class="row" id="devices-tests">
-      <span>Test :</span>
-      <button class="test" data-flag="green">Vert</button>
-      <button class="test" data-flag="yellow">Jaune</button>
-      <button class="test" data-flag="red">Rouge</button>
-      <button class="test" data-flag="chequered">Damier</button>
-      <button id="btn-release">Rendre la main</button>
+      <span data-i18n="wled.test">Test :</span>
+      <button class="test" data-flag="green" data-i18n="wled.testGreen">Vert</button>
+      <button class="test" data-flag="yellow" data-i18n="wled.testYellow">Jaune</button>
+      <button class="test" data-flag="red" data-i18n="wled.testRed">Rouge</button>
+      <button class="test" data-flag="chequered" data-i18n="wled.testChequered">Damier</button>
+      <button id="btn-release" data-i18n="wled.release">Rendre la main</button>
     </div>
   </section>
 
   <section class="view" data-view="race" hidden>
     <h2>Race</h2>
     <p class="notice local-access-notice" role="status" hidden></p>
-    <div class="tabs" id="mode-tabs" role="tablist" aria-label="Championnat">
+    <div class="tabs" id="mode-tabs" role="tablist" data-i18n-attr="aria-label:race.championship">
       <button type="button" role="tab" class="tab" data-mode="nascar" aria-selected="false" aria-label="NASCAR" title="NASCAR"><img class="logo logo-nascar" src="img/nascar.svg" alt=""></button>
       <button type="button" role="tab" class="tab" data-mode="wec" aria-selected="false" aria-label="FIA WEC" title="FIA WEC"><img class="logo logo-wec logo-mono" src="img/wec.svg" alt=""></button>
       <button type="button" role="tab" class="tab" data-mode="imsa" aria-selected="false" aria-label="IMSA" title="IMSA"><img class="logo logo-imsa" src="img/imsa.svg" alt=""></button>
@@ -68,115 +72,118 @@
     <div class="panel" id="panel-live">
       <h3>Live</h3>
       <div class="row">
-        <label>Intervalle (s) <input id="s-pollInterval" type="number" step="0.1" min="0.2"></label>
-        <label class="mode-wec">Session WEC <input id="s-sessionId" type="number" min="1" placeholder="auto"></label>
+        <label><span data-i18n="race.interval">Intervalle (s)</span> <input id="s-pollInterval" type="number" step="0.1" min="0.2"></label>
+        <label class="mode-wec"><span data-i18n="race.wecSession">Session WEC</span> <input id="s-sessionId" type="number" min="1" data-i18n-attr="placeholder:race.auto"></label>
       </div>
     <div class="row mode-fixed">
       <div class="clock-field">
-        <span class="name" data-tip="Horloge que votre diffusion devrait afficher avec le retard actuel. Ajustez-la en direct avec ▲ ▼ ou les flèches du clavier jusqu'à égaler votre écran, ou tapez l'heure lue puis validez (Entrée). Échap annule.">Horloge de ma diffusion</span>
-        <div class="clock" id="delay-clock" role="group" aria-label="Horloge de ma diffusion">
+        <span class="name" data-i18n="clock.title" data-i18n-attr="data-tip:tip.clock">Horloge de ma diffusion</span>
+        <div class="clock" id="delay-clock" role="group" data-i18n-attr="aria-label:clock.title">
         <div class="seg">
-          <button type="button" class="step" data-step="3600" aria-label="Heures plus un" tabindex="-1">▲</button>
-          <input id="delay-h" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="Heures">
-          <button type="button" class="step" data-step="-3600" aria-label="Heures moins un" tabindex="-1">▼</button>
+          <button type="button" class="step" data-step="3600" data-i18n-attr="aria-label:clock.hoursUp" tabindex="-1">▲</button>
+          <input id="delay-h" type="text" inputmode="numeric" maxlength="2" autocomplete="off" data-i18n-attr="aria-label:clock.hours">
+          <button type="button" class="step" data-step="-3600" data-i18n-attr="aria-label:clock.hoursDown" tabindex="-1">▼</button>
         </div>
           <span class="sep">:</span>
         <div class="seg">
-          <button type="button" class="step" data-step="60" aria-label="Minutes plus un" tabindex="-1">▲</button>
-          <input id="delay-m" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="Minutes">
-          <button type="button" class="step" data-step="-60" aria-label="Minutes moins un" tabindex="-1">▼</button>
+          <button type="button" class="step" data-step="60" data-i18n-attr="aria-label:clock.minutesUp" tabindex="-1">▲</button>
+          <input id="delay-m" type="text" inputmode="numeric" maxlength="2" autocomplete="off" data-i18n-attr="aria-label:clock.minutes">
+          <button type="button" class="step" data-step="-60" data-i18n-attr="aria-label:clock.minutesDown" tabindex="-1">▼</button>
         </div>
           <span class="sep">:</span>
         <div class="seg">
-          <button type="button" class="step" data-step="1" aria-label="Secondes plus un" tabindex="-1">▲</button>
-          <input id="delay-s" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="Secondes">
-          <button type="button" class="step" data-step="-1" aria-label="Secondes moins un" tabindex="-1">▼</button>
+          <button type="button" class="step" data-step="1" data-i18n-attr="aria-label:clock.secondsUp" tabindex="-1">▲</button>
+          <input id="delay-s" type="text" inputmode="numeric" maxlength="2" autocomplete="off" data-i18n-attr="aria-label:clock.seconds">
+          <button type="button" class="step" data-step="-1" data-i18n-attr="aria-label:clock.secondsDown" tabindex="-1">▼</button>
         </div>
         </div>
       </div>
-      <label>Type d'horloge
-        <select id="delay-ref-kind"><option value="remaining">Temps restant</option><option value="elapsed">Temps écoulé</option></select></label>
+      <label><span data-i18n="clock.kind">Type d'horloge</span>
+        <select id="delay-ref-kind"><option value="remaining" data-i18n="clock.remaining">Temps restant</option><option value="elapsed" data-i18n="clock.elapsed">Temps écoulé</option></select></label>
       <input id="fixed-delay" type="hidden" value="0">
       <span id="delay-msg" class="hint" role="status"></span>
     </div>
     <div class="row mode-nascar">
-      <label class="check"><input id="tv-enabled" type="checkbox"> Synchroniser avec la TV</label>
-      <label>Tour affiché à la TV <input id="tv-lap" type="number" min="1" step="1"></label>
+      <label class="check"><input id="tv-enabled" type="checkbox"> <span data-i18n="race.tvSync">Synchroniser avec la TV</span></label>
+      <label><span data-i18n="race.tvLap">Tour affiché à la TV</span> <input id="tv-lap" type="number" min="1" step="1"></label>
     </div>
       <div class="row">
-        <label class="check"><input id="rec-enabled" type="checkbox"> Enregistrer les changements de drapeau</label>
+        <label class="check"><input id="rec-enabled" type="checkbox"> <span data-i18n="race.record">Enregistrer les changements de drapeau</span></label>
       </div>
       <div class="row">
-        <button id="btn-start-live" class="primary">Démarrer le live</button>
+        <button id="btn-start-live" class="primary" data-i18n="race.startLive">Démarrer le live</button>
       </div>
     </div>
 
     <div class="panel" id="panel-replay">
       <h3>Replay</h3>
       <div class="row mode-nascar">
-        <label><span class="name" data-tip="Archive NASCAR : la course est téléchargée depuis l'archive officielle. Fichier : un enregistrement JSON gardé sur votre ordinateur.">Source du replay</span>
-          <select id="replay-source"><option value="archive">Archive NASCAR</option><option value="file">Fichier</option></select></label>
+        <label><span class="name" data-i18n="replay.source" data-i18n-attr="data-tip:tip.replaySource">Source du replay</span>
+          <select id="replay-source"><option value="archive" data-i18n="replay.sourceArchive">Archive NASCAR</option><option value="file" data-i18n="replay.sourceFile">Fichier</option></select></label>
       </div>
       <div class="row mode-nascar arc-only">
-        <label><span class="name" data-tip="Saison des courses proposées dans le menu.">Année</span> <input id="arc-year" type="number" min="2000" max="2100" style="width:6.5em"></label>
-        <label><span class="name" data-tip="Série NASCAR : Cup, Xfinity ou Truck.">Série</span>
+        <label><span class="name" data-i18n="replay.year" data-i18n-attr="data-tip:tip.arcYear">Année</span> <input id="arc-year" type="number" min="2000" max="2100" style="width:6.5em"></label>
+        <label><span class="name" data-i18n="replay.series" data-i18n-attr="data-tip:tip.arcSeries">Série</span>
           <select id="arc-series"><option value="cup">Cup</option><option value="xfinity">Xfinity</option><option value="truck">Truck</option></select></label>
-        <label><span class="name" data-tip="Courses déjà parties, la plus récente d'abord. Une course apparaît environ une heure après son départ ; ses données sont publiées quelques heures après l'arrivée.">Course</span> <select id="arc-race"></select></label>
-        <button id="btn-arc-download" type="button">Télécharger le fichier</button>
+        <label><span class="name" data-i18n="replay.race" data-i18n-attr="data-tip:tip.arcRace">Course</span> <select id="arc-race"></select></label>
+        <button id="btn-arc-download" type="button" data-i18n="replay.downloadFile">Télécharger le fichier</button>
       </div>
       <div id="arc-status" class="hint mode-nascar arc-only" role="status"></div>
       <div class="row">
-        <label class="file-only"><span class="name" data-tip="Enregistrement JSON fabriqué par l'application : enregistrement en direct ou téléchargement depuis l'archive. Il doit venir du championnat de l'onglet.">Fichier</span> <input id="replay-file" type="file" accept=".json,application/json"></label>
-        <label><span class="name" data-tip="Secondes à attendre après votre clic avant que le replay démarre, au format HH:MM:SS. Utile pour lancer avant le drapeau vert de votre vidéo. 0 : démarrage immédiat.">Délai vidéo</span> <input id="replay-video" type="text" value="0" placeholder="HH:MM:SS"></label>
-        <label><span class="name" data-tip="Point de la course où commence le replay, en HH:MM:SS depuis le drapeau vert. Pour reprendre en cours de course. Pour partir d'un tour, utilisez « Tour ».">Départ (temps)</span> <input id="replay-start" type="text" value="0" placeholder="HH:MM:SS"></label>
-        <label><span class="name" data-tip="Numéro de tour où commence le replay, à la place du temps. 0 : on part du temps indiqué. Lancez quand votre vidéo arrive à ce tour. Pour les courses de l'archive, pas pour un enregistrement en direct.">Tour</span> <input id="replay-lap" type="number" min="0" step="1" value="0"></label>
-        <label><span class="name" data-tip="Vitesse de lecture : 1 suit le temps réel, 2 va deux fois plus vite. Utile pour tester sans attendre.">Vitesse</span> <input id="replay-speed" type="number" min="0.1" step="0.1" value="1"></label>
+        <label class="file-only"><span class="name" data-i18n="replay.file" data-i18n-attr="data-tip:tip.replayFile">Fichier</span> <input id="replay-file" type="file" accept=".json,application/json"></label>
+        <label><span class="name" data-i18n="replay.video" data-i18n-attr="data-tip:tip.replayVideo">Délai vidéo</span> <input id="replay-video" type="text" value="0" placeholder="HH:MM:SS"></label>
+        <label><span class="name" data-i18n="replay.startTime" data-i18n-attr="data-tip:tip.replayStart">Départ (temps)</span> <input id="replay-start" type="text" value="0" placeholder="HH:MM:SS"></label>
+        <label><span class="name" data-i18n="replay.lap" data-i18n-attr="data-tip:tip.replayLap">Tour</span> <input id="replay-lap" type="number" min="0" step="1" value="0"></label>
+        <label><span class="name" data-i18n="replay.speed" data-i18n-attr="data-tip:tip.replaySpeed">Vitesse</span> <input id="replay-speed" type="number" min="0.1" step="0.1" value="1"></label>
       </div>
       <div class="row">
-        <button id="btn-start-replay" class="primary" title="Lance le replay avec les réglages ci-dessus">Lancer le replay</button>
+        <button id="btn-start-replay" class="primary">Lancer le replay</button>
         <span id="replay-msg" class="error" role="alert"></span>
       </div>
     </div>
 
     <div class="row run-bar">
-      <label class="check"><input id="no-wled" type="checkbox"> Sans WLED (observer seulement)</label>
-      <button id="btn-stop" disabled>Arrêter</button>
+      <label class="check"><input id="no-wled" type="checkbox"> <span data-i18n="race.noWled">Sans WLED (observer seulement)</span></label>
+      <button id="btn-stop" disabled data-i18n="race.stop">Arrêter</button>
       <button id="btn-download" hidden>Télécharger l'enregistrement</button>
     </div>
     <div id="progress" class="progress"></div>
   </section>
 
   <section class="view" data-view="settings" hidden>
-    <h2>Réglages</h2>
+    <h2 data-i18n="settings.title">Réglages</h2>
     <div class="row">
-      <label class="check switch"><input id="theme-dark" type="checkbox" role="switch"><span class="name" data-tip="Passe l'interface en thème sombre ou clair. Ce choix est mémorisé dans ce navigateur uniquement.">Thème sombre</span></label>
+      <label class="check switch"><input id="theme-dark" type="checkbox" role="switch"><span class="name" data-i18n="settings.theme" data-i18n-attr="data-tip:tip.theme">Thème sombre</span></label>
     </div>
       <div class="grid" id="settings-grid"></div>
       <div class="row">
-        <button id="btn-export">Exporter la configuration</button>
-        <label class="file">Importer <input id="import-config" type="file" accept=".json,application/json"></label>
-        <button id="btn-reset">Valeurs par défaut</button>
+        <button id="btn-export" data-i18n="settings.export">Exporter la configuration</button>
+        <label class="file"><span data-i18n="settings.import">Importer</span> <input id="import-config" type="file" accept=".json,application/json"></label>
+        <button id="btn-reset" data-i18n="settings.reset">Valeurs par défaut</button>
       </div>
       <div id="settings-error" class="error"></div>
   </section>
 
   <section id="sec-log">
-    <h2>Journal <button id="btn-clear-log" class="small">Effacer</button></h2>
+    <h2><span data-i18n="log.title">Journal</span> <button id="btn-clear-log" class="small" data-i18n="log.clear">Effacer</button></h2>
     <pre id="log"></pre>
   </section>
 </main>
-<script defer src="js/core.js?v=b441686c16"></script>
-<script defer src="js/sources/nascar.js?v=b441686c16"></script>
-<script defer src="js/sources/wec.js?v=b441686c16"></script>
-<script defer src="js/sources/imsa.js?v=b441686c16"></script>
-<script defer src="js/sources/replay.js?v=b441686c16"></script>
-<script defer src="js/sync.js?v=b441686c16"></script>
-<script defer src="js/wled.js?v=b441686c16"></script>
-<script defer src="js/discovery.js?v=b441686c16"></script>
-<script defer src="js/settings.js?v=b441686c16"></script>
-<script defer src="js/recording.js?v=b441686c16"></script>
-<script defer src="js/nascar-import.js?v=b441686c16"></script>
-<script defer src="js/engine.js?v=b441686c16"></script>
-<script defer src="js/ui.js?v=b441686c16"></script>
+<script defer src="js/core.js?v=133318bb28"></script>
+<script defer src="js/i18n.js?v=133318bb28"></script>
+<script defer src="js/i18n/fr.js?v=133318bb28"></script>
+<script defer src="js/i18n/en.js?v=133318bb28"></script>
+<script defer src="js/sources/nascar.js?v=133318bb28"></script>
+<script defer src="js/sources/wec.js?v=133318bb28"></script>
+<script defer src="js/sources/imsa.js?v=133318bb28"></script>
+<script defer src="js/sources/replay.js?v=133318bb28"></script>
+<script defer src="js/sync.js?v=133318bb28"></script>
+<script defer src="js/wled.js?v=133318bb28"></script>
+<script defer src="js/discovery.js?v=133318bb28"></script>
+<script defer src="js/settings.js?v=133318bb28"></script>
+<script defer src="js/recording.js?v=133318bb28"></script>
+<script defer src="js/nascar-import.js?v=133318bb28"></script>
+<script defer src="js/engine.js?v=133318bb28"></script>
+<script defer src="js/ui.js?v=133318bb28"></script>
 </body>
 </html>

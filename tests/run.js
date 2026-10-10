@@ -12,9 +12,10 @@ if (!global.AbortController) {
 global.window = undefined;
 var js = path.join(__dirname, '..', 'js');
 global.RF = undefined;
-['core', 'sources/nascar', 'sources/wec', 'sources/imsa', 'sources/replay', 'sync', 'wled', 'discovery', 'settings', 'recording', 'nascar-import', 'engine']
+['core', 'i18n', 'i18n/fr', 'i18n/en', 'sources/nascar', 'sources/wec', 'sources/imsa', 'sources/replay', 'sync', 'wled', 'discovery', 'settings', 'recording', 'nascar-import', 'engine']
   .forEach(function (f) { require(path.join(js, f + '.js')); });
 var RF = global.RF, F = RF.FlagState;
+RF.setLang('fr');          // les assertions sur les messages sont en français ; Node expose navigator.language, donc la détection ne suffit pas
 
 var tests = [], failed = 0;
 function test(name, fn) { tests.push([name, fn]); }
@@ -145,14 +146,175 @@ test('synchro TV', function () {
   assert.equal(s.delaySeconds({ lap: null, metadata: {} }, 0), 0);
 });
 
-test('chaque réglage de la grille a sa bulle d\'aide (TIPS dans ui.js)', function () {
-  var src = fs.readFileSync(path.join(js, 'ui.js'), 'utf8');
-  var fields = src.slice(src.indexOf('var FIELDS'), src.indexOf('var TIPS'));
-  var keys = [], re = /\[\s*'(\w+)',\s*'(\w+)',/g, m;
-  while ((m = re.exec(fields))) keys.push(m[1] + '.' + m[2]);
-  assert.ok(keys.length > 10, 'FIELDS introuvable');
-  var missing = keys.filter(function (k) { return src.indexOf("'" + k + "':") === -1; });
-  assert.deepEqual(missing, [], 'description manquante dans TIPS pour: ' + missing.join(', '));
+/* ----- internationalisation (js/i18n.js, js/i18n/*.js) ----- */
+var LANGS = RF.LANGUAGES;
+function dict(code) { return RF.messages(code); }
+function varsOf(v) {                                  // variables {x} d'un texte, ou de toutes les formes d'un pluriel
+  var texts = typeof v === 'object' ? Object.keys(v).map(function (k) { return v[k]; }) : [v], vars = {};
+  texts.forEach(function (t) { (t.match(/\{(\w+)\}/g) || []).forEach(function (x) { vars[x] = true; }); });
+  return Object.keys(vars).sort().join(',');
+}
+function stripComments(src) { return src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"\\])\/\/.*$/gm, '$1'); }
+function readText(f) { return fs.readFileSync(path.join(__dirname, '..', f), 'utf8'); }
+function listJsFiles(dir, out) {
+  fs.readdirSync(path.join(__dirname, '..', dir)).forEach(function (n) {
+    var rel = dir + '/' + n;
+    if (fs.statSync(path.join(__dirname, '..', rel)).isDirectory()) { if (n !== 'i18n') listJsFiles(rel, out); }
+    else if (/\.js$/.test(n)) out.push(rel);
+  });
+  return out;
+}
+var NAMESPACES = Object.keys(dict('fr')).map(function (k) { return k.split('.')[0]; }).filter(function (v, i, a) { return a.indexOf(v) === i; });
+var DYNAMIC_PREFIXES = ['flag.', 'localAccess.', 'settings.field.', 'settings.tip.', '_meta.'];     // clés construites en code : texte + variable
+/* Clés citées dans le code (littéraux « espace.nom ») et dans index.html (data-i18n, data-i18n-attr). */
+function usedKeys() {
+  var keys = {}, re = new RegExp("(['\"])((?:" + NAMESPACES.join('|') + ")(?:\\.[A-Za-z0-9_]+)+)\\1", 'g'), m;
+  var reAttr = new RegExp("(['\"])[a-z-]+:((?:" + NAMESPACES.join('|') + ")(?:\\.[A-Za-z0-9_]+)+)\\1", 'g');      // 'placeholder:settings.none'
+  listJsFiles('js', []).forEach(function (f) {
+    var src = stripComments(readText(f));
+    while ((m = re.exec(src))) keys[m[2]] = f;
+    while ((m = reAttr.exec(src))) keys[m[2]] = f;
+  });
+  var html = readText('index.html');
+  (html.match(/data-i18n="[^"]+"/g) || []).forEach(function (x) { keys[x.slice(11, -1)] = 'index.html'; });
+  (html.match(/data-i18n-attr="[^"]+"/g) || []).forEach(function (x) { x.slice(16, -1).split(';').forEach(function (pair) { keys[pair.slice(pair.indexOf(':') + 1)] = 'index.html'; }); });
+  RF.SETTINGS_FIELDS.forEach(function (f) { keys['settings.field.' + f[0] + '.' + f[1]] = 'SETTINGS_FIELDS'; keys['settings.tip.' + f[0] + '.' + f[1]] = 'SETTINGS_FIELDS'; });
+  return keys;
+}
+
+test('i18n : langue détectée (mémorisée, navigateur, repli anglais)', function () {
+  assert.equal(RF.detectLang(null, ['fr-FR']), 'fr');
+  assert.equal(RF.detectLang(null, ['fr-CA', 'en']), 'fr');
+  assert.equal(RF.detectLang(null, ['en-US']), 'en');
+  assert.equal(RF.detectLang(null, ['de-DE']), 'en');                          // langue non traduite : anglais
+  assert.equal(RF.detectLang(null, ['de-DE', 'fr']), 'fr');                    // la première langue connue de la liste
+  assert.equal(RF.detectLang(null, []), 'en');
+  assert.equal(RF.detectLang('en', ['fr-FR']), 'en');                          // le choix mémorisé l'emporte
+  assert.equal(RF.detectLang('xx', ['fr-FR']), 'fr');                          // choix mémorisé inconnu : ignoré
+});
+
+test('i18n : texte, variables, pluriels, repli et langue inconnue', function () {
+  try {
+    RF.addMessages('fr', { 'test.hello': 'Bonjour {name}', 'test.items': { zero: 'aucun', one: '{count} objet', other: '{count} objets' }, 'test.frOnly': 'seulement fr' });
+    RF.addMessages('en', { 'test.hello': 'Hello {name}', 'test.items': { one: '{count} item', other: '{count} items' } });
+    RF.setLang('fr');
+    assert.equal(RF.t('test.hello', { name: 'Ana' }), 'Bonjour Ana');
+    assert.equal(RF.t('test.hello'), 'Bonjour {name}');                        // variable absente : laissée telle quelle
+    assert.equal(RF.t('test.items', { count: 0 }), 'aucun');
+    assert.equal(RF.t('test.items', { count: 1 }), '1 objet');
+    assert.equal(RF.t('test.items', { count: 5 }), '5 objets');
+    RF.setLang('en');
+    assert.equal(RF.t('test.items', { count: 0 }), '0 items');                 // pas de forme « zero » en anglais : « other »
+    assert.equal(RF.t('test.items', { count: 1 }), '1 item');
+    assert.equal(RF.t('test.frOnly'), 'seulement fr');                         // clé absente en anglais : repli sur le français
+    assert.equal(RF.t('test.nowhere'), 'test.nowhere');                        // absente partout : la clé elle-même
+    assert.equal(RF.setLang('xx'), false); assert.equal(RF.lang(), 'en');      // langue inconnue refusée
+  } finally {
+    RF.setLang('fr');
+    LANGS.forEach(function (code) { ['test.hello', 'test.items', 'test.frOnly'].forEach(function (k) { delete dict(code)[k]; }); });     // dictionnaires laissés propres
+  }
+});
+
+test('i18n : formats d\'heure et de date', function () {
+  try {
+    ['fr', 'en'].forEach(function (code) {
+      RF.setLang(code);
+      assert.ok(/^\d\d[\/.\-]\d\d$/.test(RF.formatDayMonth('2026-10-07')), code + ' : ' + RF.formatDayMonth('2026-10-07'));
+      assert.ok(/\d/.test(RF.formatTime(new Date(0))) && /\d/.test(RF.formatDateTime(new Date(0))));
+    });
+    assert.equal(RF.languageName('fr'), 'Français'); assert.equal(RF.languageName('en'), 'English');
+  } finally { RF.setLang('fr'); }
+});
+
+test('i18n : mêmes clés, mêmes variables et mêmes formes de pluriel dans chaque langue', function () {
+  var ref = dict(LANGS[0]), problems = [];
+  LANGS.slice(1).forEach(function (code) {
+    var d = dict(code);
+    Object.keys(ref).forEach(function (k) { if (!(k in d)) problems.push(code + ' : clé absente ' + k); });
+    Object.keys(d).forEach(function (k) {
+      if (!(k in ref)) return problems.push(LANGS[0] + ' : clé absente ' + k + ' (présente en ' + code + ')');
+      if (varsOf(ref[k]) !== varsOf(d[k])) problems.push(k + ' : variables différentes (' + varsOf(ref[k]) + ' / ' + varsOf(d[k]) + ')');
+      if ((typeof ref[k] === 'object') !== (typeof d[k] === 'object')) problems.push(k + ' : pluriel dans une langue seulement');
+      if (typeof d[k] === 'object' && !('other' in d[k])) problems.push(k + ' : forme « other » manquante en ' + code);
+    });
+  });
+  assert.deepEqual(problems, []);
+});
+
+test('i18n : toute clé citée existe, aucune clé orpheline', function () {
+  var used = usedKeys(), problems = [];
+  LANGS.forEach(function (code) {
+    Object.keys(used).forEach(function (k) { if (!(k in dict(code))) problems.push(code + ' : clé citée dans ' + used[k] + ' mais absente : ' + k); });
+  });
+  Object.keys(dict('fr')).forEach(function (k) {
+    if (used[k] || DYNAMIC_PREFIXES.some(function (p) { return k.indexOf(p) === 0; })) return;
+    problems.push('clé inutilisée : ' + k);
+  });
+  assert.deepEqual(problems, []);
+  // une clé construite en code ne peut avoir qu'un préfixe déclaré
+  var bad = [];
+  listJsFiles('js', []).forEach(function (f) {
+    (stripComments(readText(f)).match(/'((?:[A-Za-z_]+\.)+)'\s*\+/g) || []).forEach(function (x) {
+      var pre = x.match(/'([^']+)'/)[1]; if (NAMESPACES.indexOf(pre.split('.')[0]) !== -1 && DYNAMIC_PREFIXES.indexOf(pre) === -1) bad.push(f + ' : ' + pre);
+    });
+  });
+  assert.deepEqual(bad, [], 'préfixe de clé dynamique non déclaré (DYNAMIC_PREFIXES)');
+});
+
+test('chaque réglage de la grille a libellé, nom court et bulle d\'aide dans chaque langue', function () {
+  assert.ok(RF.SETTINGS_FIELDS.length > 10);
+  var missing = [];
+  LANGS.forEach(function (code) {
+    RF.SETTINGS_FIELDS.forEach(function (f) {
+      ['settings.field.', 'settings.tip.'].forEach(function (pre) { if (!dict(code)[pre + f[0] + '.' + f[1]]) missing.push(code + ' ' + pre + f[0] + '.' + f[1]); });
+    });
+    if (!dict(code)['settings.none']) missing.push(code + ' settings.none');
+  });
+  assert.deepEqual(missing, [], 'texte manquant (settings.field.* / settings.tip.* dans js/i18n/)');
+});
+
+test('bulles d\'aide : au plus 220 caractères dans chaque langue', function () {
+  var long = [];
+  LANGS.forEach(function (code) {
+    var d = dict(code);
+    Object.keys(d).forEach(function (k) { if (/^(settings\.)?tip\./.test(k) && d[k].length > 220) long.push(code + ' ' + k + ' (' + d[k].length + ')'); });
+  });
+  assert.deepEqual(long, []);
+});
+
+test('index.html : bulles et textes passent par data-i18n', function () {
+  var html = readText('index.html').replace(/<script[\s\S]*?<\/script>/g, '');
+  assert.ok(!/\sdata-tip="/.test(html), 'data-tip littéral : utilisez data-i18n-attr="data-tip:tip.xxx"');
+  var BRANDS = /^(WLED|Race|Live|Replay|NASCAR|FIA WEC|IMSA|Cup|Xfinity|Truck|WLED Race Flags|Race Flags)$/;
+  var DYNAMIC_IDS = ['btn-start-replay', 'btn-download', 'flag-badge'];       // textes écrits par ui.js
+  var bad = [], re = /<(\w+)([^>]*)>([^<]+)<\/\1>/g, m;
+  while ((m = re.exec(html))) {
+    var text = m[3].trim(), attrs = m[2];
+    if (!/[A-Za-zÀ-ÿ]{3}/.test(text) || BRANDS.test(text)) continue;
+    var id = (attrs.match(/\sid="([^"]+)"/) || [])[1];
+    if (/\sdata-i18n="/.test(attrs) || DYNAMIC_IDS.indexOf(id) !== -1) continue;
+    bad.push(m[1] + ' : ' + text);
+  }
+  assert.deepEqual(bad, [], 'texte visible sans data-i18n');
+});
+
+test('js : aucun texte français resté en dur (hors dictionnaires)', function () {
+  var ACCENTS = /[àâçéèêëîïôûùüœÀÉ«»]|\b(les|des|est|pas|sans|avec|pour|dans|vous|votre|rendue|aucun|aucune|impossible|erreur)\b/i, bad = [];
+  listJsFiles('js', []).forEach(function (f) {
+    var src = stripComments(readText(f)), re = /'((?:[^'\\\n]|\\.)*)'|"((?:[^"\\\n]|\\.)*)"/g, m;
+    while ((m = re.exec(src))) { var lit = m[1] || m[2] || ''; if (ACCENTS.test(lit)) bad.push(f + ' : ' + lit.slice(0, 60)); }
+  });
+  assert.deepEqual(bad, [], 'passez ces textes par RF.t et js/i18n/*.js : ' + bad.join(' | '));
+});
+
+test('i18n : messages d\'erreur en anglais', function () {
+  try {
+    RF.setLang('en');
+    assert.throws(function () { RF.validateSettings({ wled: { brightness: 999 } }); }, /Brightness must be between 0 and 255/);
+    assert.throws(function () { RF.validateSettings({ scan: { prefix: 'x' } }); }, /Invalid network prefix/);
+    assert.throws(function () { new RF.ReplaySource({ document: {}, speed: 0 }); }, /speed must be greater than zero/);
+    assert.throws(function () { RF.loadRecording({ format: 'x' }); }, /Unrecognized recording format/);
+  } finally { RF.setLang('fr'); }
 });
 
 test('préfixe de scan déduit de l\'adresse de la page', function () {

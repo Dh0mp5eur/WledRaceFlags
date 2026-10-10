@@ -5,64 +5,64 @@
   RF.RECORDING_FORMAT = 'raceflags-recording';
   RF.RECORDING_VERSION = 1;
 
-  function fail(msg) { return new Error(msg); }
-  function optInt(v, label) {
+  function fail(key, params) { return new Error(RF.t(key, params)); }
+  function optInt(v, key, params) {
     if (v == null) return null;
-    if (typeof v === 'boolean') throw fail(label);
+    if (typeof v === 'boolean') throw fail(key, params);
     var n = parseInt(v, 10);
-    if (isNaN(n)) throw fail(label);
+    if (isNaN(n)) throw fail(key, params);
     return n;
   }
 
   function parseEvent(item, index, defaultSource) {
-    if (!item || typeof item !== 'object') throw fail('Événement ' + index + ' invalide');
+    if (!item || typeof item !== 'object') throw fail('err.replay.eventInvalid', { index: index });
     var offset = Number(item.offset);
-    if (item.offset == null || !isFinite(offset)) throw fail('Événement ' + index + ' invalide: offset');
-    if (offset < 0) throw fail('Événement ' + index + ': offset négatif');
-    if (!RF.isFlag(item.flag)) throw fail('Événement ' + index + ' invalide: drapeau ' + item.flag);
+    if (item.offset == null || !isFinite(offset)) throw fail('err.replay.eventOffset', { index: index });
+    if (offset < 0) throw fail('err.replay.eventOffsetNegative', { index: index });
+    if (!RF.isFlag(item.flag)) throw fail('err.replay.eventFlag', { index: index, flag: item.flag });
     var occurred = RF.parseDate(item.occurred_at);
-    if (!occurred) throw fail('Événement ' + index + ' invalide: occurred_at');
+    if (!occurred) throw fail('err.replay.eventOccurredAt', { index: index });
     var remaining = item.remaining_seconds;
     if (remaining != null) {
-      if (typeof remaining === 'boolean') throw fail('Événement ' + index + ': temps restant invalide');
+      if (typeof remaining === 'boolean') throw fail('err.replay.eventRemaining', { index: index });
       remaining = Number(remaining);
-      if (!isFinite(remaining) || remaining < 0) throw fail('Événement ' + index + ': temps restant invalide');
+      if (!isFinite(remaining) || remaining < 0) throw fail('err.replay.eventRemaining', { index: index });
     }
     var metadata = item.metadata == null ? {} : item.metadata;
-    if (typeof metadata !== 'object' || Array.isArray(metadata)) throw fail('Événement ' + index + ': metadata invalide');
+    if (typeof metadata !== 'object' || Array.isArray(metadata)) throw fail('err.replay.eventMetadata', { index: index });
     var source = item.source == null ? defaultSource : item.source;
-    if (typeof source !== 'string' || !source) throw fail('Événement ' + index + ': source invalide');
+    if (typeof source !== 'string' || !source) throw fail('err.replay.eventSource', { index: index });
     return {
       offset: offset, effectiveOffset: offset, source: source, flag: item.flag, occurredAt: occurred,
       rawState: item.raw_state === undefined ? null : item.raw_state,
-      lap: optInt(item.lap, 'Événement ' + index + ': tour invalide'),
-      totalLaps: optInt(item.total_laps, 'Événement ' + index + ': total de tours invalide'),
+      lap: optInt(item.lap, 'err.replay.eventLap', { index: index }),
+      totalLaps: optInt(item.total_laps, 'err.replay.eventTotalLaps', { index: index }),
       remainingSeconds: remaining, metadata: metadata
     };
   }
 
   function parseLapTimeline(value) {
     if (value == null) return {};
-    if (!Array.isArray(value)) throw fail('La chronologie des tours est invalide');
+    if (!Array.isArray(value)) throw fail('err.replay.badTimeline');
     var timeline = {}, prev = -1;
     value.forEach(function (item, i) {
       var lap = item && parseInt(item.lap, 10), off = item && Number(item.offset);
       if (!item || !(lap > 0) || timeline[lap] !== undefined || !isFinite(off) || off < prev)
-        throw fail('Tour ' + i + ' invalide dans la chronologie');
+        throw fail('err.replay.badTimelineLap', { index: i });
       timeline[lap] = off; prev = off;
     });
     return timeline;
   }
 
   function loadRecording(doc) {
-    if (!doc || typeof doc !== 'object' || Array.isArray(doc)) throw fail("L'enregistrement doit contenir un objet JSON");
-    if (doc.format !== RF.RECORDING_FORMAT) throw fail("Format d'enregistrement non reconnu");
-    if (doc.version !== RF.RECORDING_VERSION) throw fail("Version d'enregistrement non prise en charge: " + doc.version);
-    if (typeof doc.source !== 'string' || !doc.source) throw fail("La source de l'enregistrement est invalide");
-    if (!Array.isArray(doc.events) || !doc.events.length) throw fail("L'enregistrement ne contient aucun événement");
+    if (!doc || typeof doc !== 'object' || Array.isArray(doc)) throw fail('err.replay.notObject');
+    if (doc.format !== RF.RECORDING_FORMAT) throw fail('err.replay.badFormat');
+    if (doc.version !== RF.RECORDING_VERSION) throw fail('err.replay.badVersion', { version: doc.version });
+    if (typeof doc.source !== 'string' || !doc.source) throw fail('err.replay.badSource');
+    if (!Array.isArray(doc.events) || !doc.events.length) throw fail('err.replay.noEvents');
     var events = doc.events.map(function (it, i) { return parseEvent(it, i, doc.source); });
     for (var i = 1; i < events.length; i++)
-      if (events[i].offset < events[i - 1].offset) throw fail("Les offsets de l'enregistrement ne sont pas croissants");
+      if (events[i].offset < events[i - 1].offset) throw fail('err.replay.offsetsNotIncreasing');
     return { source: doc.source, events: events, timeline: parseLapTimeline(doc.lap_timeline), name: doc.name || null };
   }
 
@@ -85,11 +85,11 @@
   /* Paramètres de lecture : validés avant toute modification de l'état, pour qu'un recalage refusé laisse le replay intact. */
   function parseParams(o) {
     var p = { videoOffset: o.videoOffset || 0, startAt: o.startAt || 0, startLap: o.startLap == null ? null : o.startLap, speed: o.speed == null ? 1 : o.speed };
-    if (!isFinite(p.videoOffset) || p.videoOffset < 0) throw fail('Le délai vidéo ne peut pas être négatif');
-    if (!isFinite(p.startAt) || p.startAt < 0) throw fail('Le point de départ ne peut pas être négatif');
-    if (p.startLap !== null && !(p.startLap > 0)) throw fail('Le tour de départ doit être supérieur à zéro');
-    if (p.startLap !== null && p.startAt) throw fail('Le point de départ et le tour de départ ne peuvent pas être combinés');
-    if (!isFinite(p.speed) || p.speed <= 0) throw fail('La vitesse de replay doit être supérieure à zéro');
+    if (!isFinite(p.videoOffset) || p.videoOffset < 0) throw fail('err.replay.videoNegative');
+    if (!isFinite(p.startAt) || p.startAt < 0) throw fail('err.replay.startNegative');
+    if (p.startLap !== null && !(p.startLap > 0)) throw fail('err.replay.lapPositive');
+    if (p.startLap !== null && p.startAt) throw fail('err.replay.startAndLap');
+    if (!isFinite(p.speed) || p.speed <= 0) throw fail('err.replay.speedPositive');
     return p;
   }
 
@@ -112,8 +112,8 @@
   ReplaySource.prototype._apply = function (p) {
     var rec = this._rec, startAt;
     if (p.startLap !== null) {
-      if (!Object.keys(rec.timeline).length) throw fail('Cet enregistrement ne contient pas les offsets des tours');
-      if (rec.timeline[p.startLap] === undefined) throw fail('Le tour ' + p.startLap + " est absent de l'enregistrement");
+      if (!Object.keys(rec.timeline).length) throw fail('err.replay.noLapOffsets');
+      if (rec.timeline[p.startLap] === undefined) throw fail('err.replay.lapMissing', { lap: p.startLap });
       startAt = rec.timeline[p.startLap];
     } else startAt = p.startAt;
     var events = selectEvents(rec.events, startAt, p.startLap);
@@ -142,7 +142,7 @@
   ReplaySource.prototype.resync = function (o) { this._apply(parseParams(o)); };
   ReplaySource.prototype.setSignal = function () {};
   ReplaySource.prototype.poll = function () {
-    if (this._index >= this._events.length) return Promise.reject(RF.SourceFinished('fin'));
+    if (this._index >= this._events.length) return Promise.reject(RF.SourceFinished('finished'));
     var wallElapsed = this._clock() - this._startedAt;
     var replayElapsed = Math.max(0, (wallElapsed - this._videoOffset) * this._speed);
     if (wallElapsed < this._videoOffset) return Promise.reject(RF.SourceNotReady(this._videoOffset - wallElapsed));

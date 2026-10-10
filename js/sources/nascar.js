@@ -8,9 +8,9 @@
 
   function optionalInt(value, field) {
     if (value == null) return null;
-    if (typeof value === 'boolean') throw RF.SourceError('Champ NASCAR invalide: ' + field + '=' + value);
+    if (typeof value === 'boolean') throw RF.SourceError(RF.t('err.nascar.badField', { field: field, value: value }));
     var n = parseInt(value, 10);
-    if (isNaN(n)) throw RF.SourceError('Champ NASCAR invalide: ' + field + '=' + JSON.stringify(value));
+    if (isNaN(n)) throw RF.SourceError(RF.t('err.nascar.badField', { field: field, value: JSON.stringify(value) }));
     return n;
   }
 
@@ -37,7 +37,7 @@
   NascarSource.prototype.poll = function () {
     var self = this;
     return RF.fetchJson(self._url, {}, self._timeoutMs, self._signal).then(function (data) {
-      if (!data || typeof data !== 'object' || Array.isArray(data)) throw RF.SourceError("Le flux NASCAR n'est pas un objet JSON");
+      if (!data || typeof data !== 'object' || Array.isArray(data)) throw RF.SourceError(RF.t('err.nascar.notObject'));
       var rawFlag = optionalInt(data.flag_state, 'flag_state');
       var lap = optionalInt(data.lap_number, 'lap_number');
       var total = optionalInt(data.laps_in_race, 'laps_in_race');
@@ -51,7 +51,7 @@
       });
     }, function (e) {
       if (e && e.name === 'SourceError') throw e;
-      throw RF.SourceError('Impossible de lire le flux NASCAR: ' + (e && e.message || e));
+      throw RF.SourceError(RF.t('err.nascar.readFailed', { detail: e && e.message || e }));
     });
   };
   NascarSource.prototype.close = function () {};

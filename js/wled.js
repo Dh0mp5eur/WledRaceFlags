@@ -32,11 +32,11 @@
     return self._fetch(self._base + '/json/state', RF.wledFetchOptions(self._base, {
       method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload)
     }), self._timeoutMs, signal).then(function (r) {
-      if (!r || typeof r !== 'object' || Array.isArray(r)) throw RF.OutputError('WLED a retourné une réponse JSON invalide');
+      if (!r || typeof r !== 'object' || Array.isArray(r)) throw RF.OutputError(RF.t('err.wled.badJson'));
       return r;
     }, function (e) {
       if (e && e.name === 'OutputError') throw e;
-      throw RF.OutputError('Erreur WLED (' + self._base + '): ' + (e && e.message || e));
+      throw RF.OutputError(RF.t('err.wled.request', { url: self._base, detail: e && e.message || e }));
     });
   };
   WledClient.prototype.getState = function (signal) {
@@ -88,7 +88,7 @@
   }
   WledOutput.prototype.apply = function (event) {
     var self = this;
-    if (event.flag === F.UNKNOWN) return Promise.reject(RF.OutputError('Un état inconnu ne peut pas être envoyé à WLED'));
+    if (event.flag === F.UNKNOWN) return Promise.reject(RF.OutputError(RF.t('err.wled.unknownState')));
     var effect = self._effectFor(event.flag);
     return self._stopCurrent().then(function () {
       self._raiseWorkerError();
@@ -142,7 +142,7 @@
     if (flag === F.GREEN || flag === F.CHEQUERED) return function (s) { return self._green(s); };
     if (flag === F.YELLOW) return function (s) { return self._breathe(F.YELLOW, YELLOW, s); };
     if (flag === F.RED) return function (s) { return self._breathe(F.RED, RED, s); };
-    throw RF.OutputError('État WLED non pris en charge: ' + flag);
+    throw RF.OutputError(RF.t('err.wled.unsupportedState', { flag: flag }));
   };
   WledOutput.prototype._green = function (signal) {
     var self = this, c = self.client, preset = self._presets[F.GREEN];
@@ -173,7 +173,7 @@
     if (this._ctrl) this._ctrl.abort();
     var task = this._task;
     this._ctrl = null;
-    return Promise.race([task, RF.sleep(3).then(function () { throw RF.OutputError("L'effet WLED précédent ne s'est pas arrêté"); })]);
+    return Promise.race([task, RF.sleep(3).then(function () { throw RF.OutputError(RF.t('err.wled.effectNotStopped')); })]);
   };
   WledOutput.prototype._raiseWorkerError = function () {
     var e = this._error; this._error = null;
