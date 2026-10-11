@@ -9,9 +9,13 @@ Fichiers utilisés comme icônes des onglets de la page Race. Ils sont enregistr
 | `nascar.svg` | NASCAR | https://commons.wikimedia.org/wiki/File:NASCAR.svg | Domaine public (Wikimedia Commons) |
 | `wec.svg` | FIA World Endurance Championship | https://commons.wikimedia.org/wiki/File:WEC_Logo.svg | Domaine public (Wikimedia Commons) |
 | `imsa.svg` | IMSA WeatherTech SportsCar Championship | https://commons.wikimedia.org/wiki/File:IMSA_SportsCar_Championship_logo.svg | Domaine public (Wikimedia Commons) |
+| `elms.png` | European Le Mans Series | https://commons.wikimedia.org/wiki/File:European_Le_Mans_Series_Logo.jpg | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.fr), auteur Kobokem2021 |
 
-Les trois fichiers sont marqués « trademarked » sur Wikimedia Commons : le droit d'auteur est libre mais ce sont des **marques déposées** de leurs propriétaires
-(NASCAR, FIA et ACO, IMSA). Elles servent ici uniquement à identifier le championnat suivi, dans un outil personnel. Ce projet n'est affilié à aucun d'eux.
+Les fichiers NASCAR, WEC et IMSA sont marqués « trademarked » sur Wikimedia Commons : le droit d'auteur est libre mais ce sont des **marques déposées** de leurs propriétaires
+(NASCAR, FIA et ACO, IMSA). Le logo ELMS est lui aussi une marque de l'ACO. Elles servent ici uniquement à identifier le championnat suivi, dans un outil personnel. Ce projet n'est affilié à aucun d'eux.
+
+`elms.png` est une copie modifiée du fichier de Commons (JPEG 3200 × 1387) : marges blanches recadrées, réduit à 360 px de large. Il reste sous CC BY-SA 4.0,
+crédit : « European Le Mans Series Logo » par Kobokem2021, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.fr), via Wikimedia Commons, recadré et réduit.
 
 Avant d'ajouter ou de remplacer un logo : vérifier la licence sur la page du fichier de Wikimedia Commons et mettre ce tableau à jour.
 

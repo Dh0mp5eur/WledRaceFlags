@@ -9,6 +9,7 @@
     wled: { requestTimeout: 5.0, brightness: 255, greenBlinks: 3, greenBlinkSeconds: 0.5, breatheEffectId: 2,
             releaseOnExit: true, restoreState: true, greenPreset: null, yellowPreset: null, redPreset: null },
     wec: { sessionId: null, apiUrl: 'https://insights.griiip.com', seriesName: 'FIA World Endurance Championship' },
+    elms: { sessionId: null, apiUrl: 'https://insights.griiip.com', seriesName: 'European Le Mans Series' },
     imsa: { apiUrl: 'https://dcqsrdkhg933g.cloudfront.net', raceOnly: true },
     tvSync: { enabled: false, fixedDelaySeconds: 0, initialTvLap: 1, sampleSize: 5, fallbackLapSeconds: 45.0, maximumDelay: 600.0 },
     devices: [],           // [{ url, name, enabled }]
@@ -34,6 +35,8 @@
     ['tvSync', 'maximumDelay', 'number', { min: '1' }],
     ['wec', 'seriesName', 'text', {}],
     ['wec', 'apiUrl', 'text', {}],
+    ['elms', 'seriesName', 'text', {}],
+    ['elms', 'apiUrl', 'text', {}],
     ['imsa', 'raceOnly', 'checkbox', {}],
     ['imsa', 'apiUrl', 'text', {}]
   ];
@@ -53,10 +56,10 @@
   /* Fusionne avec les valeurs par défaut et valide. Lève une Error (message dans la langue courante) si invalide. */
   RF.validateSettings = function (raw) {
     var D = RF.DEFAULT_SETTINGS, r = obj(raw);
-    var s = obj(r.source), w = obj(r.wled), c = obj(r.wec), im = obj(r.imsa), t = obj(r.tvSync), sc = obj(r.scan);
+    var s = obj(r.source), w = obj(r.wled), c = obj(r.wec), el = obj(r.elms), im = obj(r.imsa), t = obj(r.tvSync), sc = obj(r.scan);
     var out = {
       source: {
-        type: ['nascar', 'wec', 'imsa'].indexOf(s.type == null ? D.source.type : s.type) !== -1 ? (s.type || D.source.type) : (function () { throw new Error(RF.t('settings.err.sourceType')); })(),
+        type: ['nascar', 'wec', 'imsa', 'elms'].indexOf(s.type == null ? D.source.type : s.type) !== -1 ? (s.type || D.source.type) : (function () { throw new Error(RF.t('settings.err.sourceType')); })(),
         pollInterval: num(s.pollInterval == null ? D.source.pollInterval : s.pollInterval, 'settings.name.pollInterval', 0.2, 3600),
         requestTimeout: num(s.requestTimeout == null ? D.source.requestTimeout : s.requestTimeout, 'settings.name.sourceTimeout', 0.5, 120)
       },
@@ -75,6 +78,10 @@
       wec: {
         sessionId: c.sessionId == null || c.sessionId === '' ? null : num(c.sessionId, 'settings.name.wecSession', 1, 1000000, true),
         apiUrl: String(c.apiUrl || D.wec.apiUrl), seriesName: String(c.seriesName || D.wec.seriesName)
+      },
+      elms: {
+        sessionId: el.sessionId == null || el.sessionId === '' ? null : num(el.sessionId, 'settings.name.elmsSession', 1, 1000000, true),
+        apiUrl: String(el.apiUrl || D.elms.apiUrl), seriesName: String(el.seriesName || D.elms.seriesName)
       },
       imsa: {
         apiUrl: String(im.apiUrl || D.imsa.apiUrl), raceOnly: im.raceOnly == null ? D.imsa.raceOnly : !!im.raceOnly

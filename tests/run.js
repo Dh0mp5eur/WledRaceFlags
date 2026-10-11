@@ -122,6 +122,52 @@ test('WEC : temps restant et écoulé issus de l\'horloge de session', function 
   assert.equal(w.elapsedSeconds({ clock: { elapsedTimeMillis: 'x' } }), null);
 });
 
+test('griiip : l\'horloge est extrapolée depuis son dernier relevé (ts) jusqu\'à l\'heure du serveur (tsNow)', function () {
+  var w = RF._wecInternals;
+  var clock = { increment: 1, ts: '2026-10-10T13:32:26.536+00:00', tsNow: '2026-10-10T13:38:00.245+00:00', elapsedTimeMillis: 136811 };       // relevé réel (ELMS Portimão)
+  assert.equal(w.elapsedSeconds({ clock: clock }), 470.52);
+  assert.equal(w.remainingSeconds({ lengthLimit: { timeLimitSeconds: 14400 }, clock: clock }), 13929.48);
+  assert.equal(w.elapsedSeconds({ clock: Object.assign({}, clock, { increment: 0 }) }), 136.811);                                // horloge arrêtée
+  assert.equal(w.elapsedSeconds({ clock: { elapsedTimeMillis: 5000, ts: 'x', tsNow: 'y' } }), 5);                                 // dates illisibles : relevé brut
+});
+
+test('ELMS : la source griiip choisit la course de sa série et porte le nom elms', function () {
+  var sessions = [
+    { sid: 1, seriesName: 'FIA World Endurance Championship', eventName: 'WEC', sessionName: 'Race', sessionType: 'Race', isStarted: true, startTime: '2026-10-10T12:00:00+00:00' },
+    { sid: 2, seriesName: 'European Le Mans Series', eventName: 'ELMS - 4 hours of Portimão', sessionName: 'Qualifying', sessionType: 'Qualifying', isStarted: true, startTime: '2026-10-10T09:00:00+00:00' },
+    { connectionStatus: { sid: 18210 }, seriesName: 'European Le Mans Series', eventName: 'ELMS - 4 hours of Portimão', sessionName: 'Race', sessionType: 'Race', isStarted: true, startTime: '2026-10-10T13:30:00+00:00' }
+  ];
+  var live = [{ sid: 18210, sessionFlags: [{ flag: 'Green', lapNumber: 3 }, { flag: 'Yellow', sectorNumbers: [2] }, { flag: 'Full Course Yellow', lapNumber: 5 }],
+                lengthLimit: { timeLimitSeconds: 14400 }, clock: { increment: 1, elapsedTimeMillis: 600000 } }];
+  return new Promise(function (resolve, reject) {
+    var srv = http.createServer(function (req, res) {
+      res.setHeader('Content-Type', 'application/json');
+      if (req.url.indexOf('/live/session-info/') === 0) return res.end(JSON.stringify(sessions));
+      if (req.url === '/meta/sessions-schedule-live') return res.end(JSON.stringify(live));
+      res.writeHead(404); res.end('{}');
+    });
+    srv.listen(0, '127.0.0.1', function () {
+      var src = new RF.WecSource({ name: 'elms', label: 'ELMS', seriesName: 'European Le Mans Series', apiUrl: 'http://127.0.0.1:' + srv.address().port });
+      src.poll().then(function (snap) {
+        assert.equal(snap.source, 'elms');
+        assert.equal(snap.metadata.session_id, 18210);                        // la course ELMS, pas les qualifications ni le WEC
+        assert.equal(snap.flag, F.YELLOW); assert.equal(snap.lap, 5);           // dernier drapeau piste entière (le jaune de secteur est ignoré)
+        assert.equal(snap.remainingSeconds, 13800);
+        live = 'pas une liste';
+        return src.poll().then(function () { throw new Error('devrait échouer'); }, function (e) { assert.equal(e.name, 'SourceError'); assert.ok(/ELMS/.test(e.message), e.message); });
+      }).then(function () { srv.close(); resolve(); }, function (e) { srv.close(); reject(e); });
+    });
+  });
+});
+
+test('ELMS : réglages par défaut et validation', function () {
+  var d = RF.defaultSettings();
+  assert.equal(d.elms.seriesName, 'European Le Mans Series'); assert.equal(d.elms.sessionId, null); assert.ok(/griiip/.test(d.elms.apiUrl));
+  assert.equal(RF.validateSettings({ source: { type: 'elms' } }).source.type, 'elms');
+  assert.equal(RF.validateSettings({ elms: { sessionId: '18210' } }).elms.sessionId, 18210);
+  assert.throws(function () { RF.validateSettings({ elms: { sessionId: 0 } }); }, /Session ELMS/);
+});
+
 test('médiane, durées, dates', function () {
   assert.equal(RF.median([3, 1, 2]), 2); assert.equal(RF.median([1, 2, 3, 4]), 2.5);
   assert.equal(RF.formatDuration(3725), '01:02:05');

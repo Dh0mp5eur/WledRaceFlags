@@ -292,13 +292,13 @@
     'err.nascar.badField': 'Invalid NASCAR field: {field}={value}',
     'err.nascar.notObject': 'The NASCAR feed is not a JSON object',
     'err.nascar.readFailed': 'Unable to read the NASCAR feed: {detail}',
-    'err.wec.badField': 'Invalid WEC field: {field}={value}',
-    'err.wec.readFailed': 'Unable to read the WEC feed: {detail}',
-    'err.wec.badSessions': 'The list of active WEC sessions is invalid',
-    'err.wec.noRace': 'No active race found for "{series}"; enter a session ID if you know it',
-    'err.wec.badSchedule': 'The WEC live schedule is not a JSON list',
-    'err.wec.badFlags': 'The WEC flag feed is not a JSON list',
-    'err.wec.noTrackFlag': 'No full-track flag for WEC session {id}',
+    'err.griiip.badField': 'Invalid {name} field: {field}={value}',
+    'err.griiip.readFailed': 'Unable to read the {name} feed: {detail}',
+    'err.griiip.badSessions': 'The list of active {name} sessions is invalid',
+    'err.griiip.noRace': 'No active race found for "{series}"; enter a session ID if you know it',
+    'err.griiip.badSchedule': 'The {name} live schedule is not a JSON list',
+    'err.griiip.badFlags': 'The {name} flag feed is not a JSON list',
+    'err.griiip.noTrackFlag': 'No full-track flag for {name} session {id}',
     'err.imsa.jsonpUnavailable': 'JSONP unavailable',
     'err.imsa.cancelled': 'cancelled',
     'err.imsa.scriptFailed': 'script failed to load',
@@ -335,5 +335,17 @@
     'err.replay.speedPositive': 'The replay speed must be greater than zero',
     'err.replay.noLapOffsets': 'This recording does not contain lap offsets',
     'err.replay.lapMissing': 'Lap {lap} is not in the recording'
+  });
+
+  /* ---------- ELMS and griiip sessions ---------- */
+  root.RF.addMessages('en', {
+    'race.elmsSession': 'ELMS session',
+    'tip.wecSession': 'Number of the WEC session to follow. Empty: the WEC race in progress is found automatically.',
+    'tip.elmsSession': 'Number of the ELMS session to follow. Empty: the ELMS race in progress is found automatically.',
+    'settings.name.elmsSession': 'ELMS session',
+    'settings.field.elms.seriesName': 'ELMS series',
+    'settings.field.elms.apiUrl': 'ELMS API',
+    'settings.tip.elms.seriesName': 'Exact series name used to automatically detect the ELMS race in progress.',
+    'settings.tip.elms.apiUrl': 'Address of the ELMS timing API (the same as for WEC). Change it only if it changes.'
   });
 })(typeof window !== 'undefined' ? window : global);

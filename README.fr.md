@@ -5,7 +5,7 @@
 Suivez les drapeaux d'une course automobile en direct et reproduisez-les sur vos bandes LED [WLED](https://kno.wled.ge/) :
 la pièce passe au jaune pendant une neutralisation, au rouge quand la course est arrêtée, et clignote en vert à la relance.
 
-Championnats pris en charge : **NASCAR**, **FIA WEC** et **IMSA WeatherTech**.
+Championnats pris en charge : **NASCAR**, **FIA WEC**, **European Le Mans Series (ELMS)** et **IMSA WeatherTech**.
 
 L'application tourne **entièrement dans le navigateur** : du HTML, du CSS et du JavaScript purs, sans build, sans dépendance
 et sans serveur applicatif. Il suffit de servir les fichiers (ou d'ouvrir `index.html`) sur un appareil du même réseau que vos WLED.
@@ -14,7 +14,7 @@ et sans serveur applicatif. Il suffit de servir les fichiers (ou d'ouvrir `index
 
 ## Fonctionnalités
 
-- **Suivi en direct** des flux de chronométrage publics de NASCAR, du FIA WEC et d'IMSA.
+- **Suivi en direct** des flux de chronométrage publics de NASCAR, du FIA WEC, de l'ELMS et d'IMSA.
 - **Effets sur la bande** :
   - vert ou damier : clignotements verts, puis la main est rendue ;
   - jaune et rouge : une seconde de couleur pleine, puis un effet « breathe » tant que le drapeau dure ;
@@ -25,7 +25,7 @@ et sans serveur applicatif. Il suffit de servir les fichiers (ou d'ouvrir `index
 - **Démarrage en pleine course** : un vert déjà en cours ne fait pas clignoter la bande ; un jaune ou un rouge est appliqué tout de suite.
 - **Synchronisation avec la diffusion** : le chronométrage officiel est souvent en avance d'une minute ou plus sur la TV.
   - NASCAR : synchronisation automatique à partir de la durée des tours ;
-  - WEC et IMSA : « Horloge de ma diffusion » à faire coïncider avec l'horloge affichée à l'écran, réglable pendant la course.
+  - WEC, ELMS et IMSA : « Horloge de ma diffusion » à faire coïncider avec l'horloge affichée à l'écran, réglable pendant la course.
 - **Enregistrement et replay** : chaque suivi en direct peut être téléchargé en JSON et rejoué plus tard,
   à partir d'un temps ou d'un tour, à vitesse variable, avec recalage en cours de replay.
 - **Archive NASCAR** : rejouez n'importe quelle course passée (Cup, Xfinity, Truck) directement depuis l'archive officielle, sans fichier.
@@ -41,7 +41,7 @@ Rien à installer, mais elle est servie en https alors que les WLED répondent e
 | Chrome, Edge (ordinateur, Android) | Fonctionne après avoir **accepté l'accès au réseau local** demandé par le navigateur à la première connexion à un WLED |
 | Firefox, Safari, tout navigateur sur iPhone ou iPad | Ne peut pas joindre les WLED : utilisez une installation locale (ci-dessous) |
 
-Le live **FIA WEC** ne fonctionne pas depuis la version en ligne (voir « Limites connues ») ; NASCAR, IMSA et les replays, si.
+Les lives **FIA WEC** et **ELMS** ne fonctionnent pas depuis la version en ligne (voir « Limites connues ») ; NASCAR, IMSA et les replays, si.
 Les appareils doivent être désignés par une adresse IP privée (`192.168.1.50`) ou un nom du réseau local (`wled-xxxx.local`, `wled.lan`).
 Si l'accès a été refusé, rétablissez-le dans les paramètres du site (icône à gauche de l'adresse), puis rechargez la page.
 L'application affiche un bandeau qui explique la situation quand les WLED sont bloqués.
@@ -91,7 +91,7 @@ Choisissez le championnat avec les onglets. Chaque onglet a deux sections :
 Un enregistrement ne se rejoue que dans l'onglet de son championnat. Les données de l'archive NASCAR sont publiées
 quelques heures après l'arrivée d'une course.
 
-**Caler les drapeaux sur votre TV (WEC et IMSA)** : l'« Horloge de ma diffusion » défile et montre l'heure que votre diffusion
+**Caler les drapeaux sur votre TV (WEC, ELMS et IMSA)** : l'« Horloge de ma diffusion » défile et montre l'heure que votre diffusion
 devrait afficher avec le retard actuel. Faites-la coïncider avec l'écran :
 
 - avec les boutons ▲ ▼ de chaque segment (ou les flèches du clavier) : le retard change aussitôt ;
@@ -137,7 +137,7 @@ rsync -a --no-owner --no-group --checksum --delete index.html css js img utilisa
 index.html          Page unique (vues WLED, Race, Réglages)
 css/app.css         Styles, thèmes clair et sombre
 js/core.js          Drapeaux, erreurs, horloge, minuteurs non bridés (Web Worker)
-js/sources/         Une source par flux : nascar.js, wec.js, imsa.js, replay.js
+js/sources/         Une source par flux : nascar.js, wec.js (WEC et ELMS), imsa.js, replay.js
 js/engine.js        Boucle de suivi : changements de drapeau, reprises sur erreur, retard
 js/sync.js          Synchronisation avec la diffusion (par tour ou retard fixe)
 js/wled.js          Client WLED et effets des drapeaux
@@ -184,7 +184,7 @@ plutôt que d'éditer les images.
 - L'onglet doit rester ouvert pendant la course. Les minuteurs passent par un Web Worker et un verrou d'écran est demandé
   pour limiter le bridage en arrière-plan.
 - Les flux de chronométrage sont publics mais non documentés : ils peuvent changer sans préavis. Leurs adresses sont modifiables dans les Réglages.
-- **Live FIA WEC : uniquement depuis `http://localhost`.** Le serveur du flux WEC n'autorise (CORS) que les pages ouvertes sur `localhost`
+- **Live FIA WEC et ELMS : uniquement depuis `http://localhost`.** Les deux viennent du même serveur de chronométrage, qui n'autorise (CORS) que les pages ouvertes sur `localhost`
   (n'importe quel port). Depuis la version en ligne, une adresse IP ou un nom comme `raceflags.lan`, le navigateur bloque le flux :
   lancez l'application sur l'ordinateur qui regarde la course (`python3 -m http.server 8000`, puis `http://localhost:8000`).
   NASCAR, IMSA et le replay fonctionnent partout.
@@ -198,13 +198,14 @@ Ce projet est un logiciel libre, distribué sous la licence **GNU General Public
 Vous pouvez l'utiliser, l'étudier, le modifier et le redistribuer, y compris dans une version améliorée.
 Toute version redistribuée, modifiée ou non, doit rester sous GPL-3.0 et être accompagnée de son code source.
 
-Les logos des championnats (`img/nascar.svg`, `img/wec.svg`, `img/imsa.svg`) ne sont pas couverts par cette licence (voir ci-dessous).
+Les logos des championnats (`img/nascar.svg`, `img/wec.svg`, `img/imsa.svg`, `img/elms.png`) ne sont pas couverts par cette licence (voir ci-dessous).
 
 ## Mentions
 
-Les logos NASCAR, FIA WEC et IMSA affichés dans les onglets proviennent de Wikimedia Commons (domaine public pour le droit d'auteur,
-détails dans [`img/README.fr.md`](img/README.fr.md)). Ce sont des **marques déposées** de leurs propriétaires, utilisées uniquement pour identifier
+Les logos NASCAR, FIA WEC, IMSA et ELMS affichés dans les onglets proviennent de Wikimedia Commons (détails dans [`img/README.fr.md`](img/README.fr.md)).
+Les logos NASCAR, FIA WEC et IMSA sont dans le domaine public pour le droit d'auteur ; le logo ELMS est de Kobokem2021, sous licence
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.fr), recadré et réduit. Ce sont des **marques déposées** de leurs propriétaires, utilisées uniquement pour identifier
 le championnat suivi.
 
-Ce projet est indépendant : il n'est affilié ni à NASCAR, ni à la FIA, à l'ACO ou à IMSA, ni au projet WLED.
+Ce projet est indépendant : il n'est affilié ni à NASCAR, ni à la FIA, à l'ACO, à l'ELMS ou à IMSA, ni au projet WLED.
 Les données de course appartiennent à leurs éditeurs ; l'application ne fait que lire les flux publics depuis votre navigateur.

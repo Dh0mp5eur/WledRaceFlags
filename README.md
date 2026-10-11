@@ -5,7 +5,7 @@
 Follow the flags of a motor race live and mirror them on your [WLED](https://kno.wled.ge/) LED strips:
 the room turns yellow during a caution, red when the race is stopped, and blinks green at the restart.
 
-Supported championships: **NASCAR**, **FIA WEC** and **IMSA WeatherTech**.
+Supported championships: **NASCAR**, **FIA WEC**, **European Le Mans Series (ELMS)** and **IMSA WeatherTech**.
 
 The application runs **entirely in the browser**: plain HTML, CSS and JavaScript, no build step, no dependency
 and no application server. Just serve the files (or open `index.html`) on a device on the same network as your WLEDs.
@@ -14,7 +14,7 @@ and no application server. Just serve the files (or open `index.html`) on a devi
 
 ## Features
 
-- **Live tracking** of the public timing feeds of NASCAR, FIA WEC and IMSA.
+- **Live tracking** of the public timing feeds of NASCAR, FIA WEC, ELMS and IMSA.
 - **Strip effects**:
   - green or chequered flag: green blinks, then control is handed back;
   - yellow and red: one second of solid color, then a “breathe” effect for as long as the flag lasts;
@@ -25,7 +25,7 @@ and no application server. Just serve the files (or open `index.html`) on a devi
 - **Joining mid-race**: a green flag already showing does not make the strip blink; a yellow or red flag is applied immediately.
 - **Broadcast synchronization**: the official timing is often a minute or more ahead of TV.
   - NASCAR: automatic synchronization based on lap times;
-  - WEC and IMSA: a “My broadcast clock” to match with the clock shown on your screen, adjustable during the race.
+  - WEC, ELMS and IMSA: a “My broadcast clock” to match with the clock shown on your screen, adjustable during the race.
 - **Recording and replay**: every live session can be downloaded as JSON and replayed later,
   from a given time or lap, at any speed, and re-aligned while it runs.
 - **NASCAR archive**: replay any past race (Cup, Xfinity, Truck) straight from the official archive, no file needed.
@@ -41,7 +41,7 @@ Nothing to install, but it is served over https while WLEDs answer over http, wh
 | Chrome, Edge (desktop, Android) | Works once you **allow local network access** when the browser asks, the first time it reaches a WLED |
 | Firefox, Safari, any browser on iPhone or iPad | Cannot reach the WLEDs: use a local installation (below) |
 
-**FIA WEC** live does not work from the online version (see “Known limitations”); NASCAR, IMSA and replays do.
+**FIA WEC** and **ELMS** live do not work from the online version (see “Known limitations”); NASCAR, IMSA and replays do.
 Devices must be given as a private IP address (`192.168.1.50`) or a local network name (`wled-xxxx.local`, `wled.lan`).
 If access was denied, restore it in the site settings (icon to the left of the address), then reload the page.
 The application shows a banner explaining the situation whenever the WLEDs are blocked.
@@ -91,7 +91,7 @@ Pick the championship with the tabs. Each tab has two sections:
 A recording can only be replayed in the tab of its own championship. NASCAR archive data is published
 a few hours after a race ends.
 
-**Matching the flags to your TV (WEC and IMSA)**: “My broadcast clock” runs and shows the time your broadcast
+**Matching the flags to your TV (WEC, ELMS and IMSA)**: “My broadcast clock” runs and shows the time your broadcast
 should display with the current delay. Make it match your screen:
 
 - with the ▲ ▼ buttons of each segment (or the keyboard arrows): the delay changes at once;
@@ -139,7 +139,7 @@ css/app.css         Styles, light and dark themes
 js/core.js          Flags, errors, clock, unthrottled timers (Web Worker)
 js/i18n.js          Translations: RF.t(), current language, formats
 js/i18n/            One dictionary per language: fr.js, en.js
-js/sources/         One source per feed: nascar.js, wec.js, imsa.js, replay.js
+js/sources/         One source per feed: nascar.js, wec.js (WEC and ELMS), imsa.js, replay.js
 js/engine.js        Tracking loop: flag changes, retries on error, delay
 js/sync.js          Broadcast synchronization (per lap or fixed delay)
 js/wled.js          WLED client and flag effects
@@ -184,7 +184,7 @@ rather than editing the images.
 - The tab must stay open during the race. Timers run in a Web Worker and a screen wake lock is requested
   to limit background throttling.
 - The timing feeds are public but undocumented: they can change without notice. Their addresses can be edited in Settings.
-- **FIA WEC live: only from `http://localhost`.** The WEC feed server only allows (CORS) pages opened on `localhost`
+- **FIA WEC and ELMS live: only from `http://localhost`.** Both come from the same timing server, which only allows (CORS) pages opened on `localhost`
   (any port). From the online version, an IP address or a name such as `raceflags.lan`, the browser blocks the feed:
   run the application on the computer that watches the race (`python3 -m http.server 8000`, then `http://localhost:8000`).
   NASCAR, IMSA and replay work everywhere.
@@ -198,13 +198,14 @@ This project is free software, released under the **GNU General Public License v
 You may use, study, modify and redistribute it, including in an improved version.
 Any redistributed version, modified or not, must remain under GPL-3.0 and come with its source code.
 
-The championship logos (`img/nascar.svg`, `img/wec.svg`, `img/imsa.svg`) are not covered by this license (see below).
+The championship logos (`img/nascar.svg`, `img/wec.svg`, `img/imsa.svg`, `img/elms.png`) are not covered by this license (see below).
 
 ## Notices
 
-The NASCAR, FIA WEC and IMSA logos shown in the tabs come from Wikimedia Commons (public domain as far as copyright goes,
-details in [`img/README.md`](img/README.md)). They are **registered trademarks** of their owners, used only to identify
+The NASCAR, FIA WEC, IMSA and ELMS logos shown in the tabs come from Wikimedia Commons (details in [`img/README.md`](img/README.md)).
+The NASCAR, FIA WEC and IMSA logos are in the public domain as far as copyright goes; the ELMS logo is by Kobokem2021, under
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), cropped and resized. They are **registered trademarks** of their owners, used only to identify
 the championship being followed.
 
-This project is independent: it is not affiliated with NASCAR, the FIA, the ACO or IMSA, nor with the WLED project.
+This project is independent: it is not affiliated with NASCAR, the FIA, the ACO, the ELMS or IMSA, nor with the WLED project.
 Race data belongs to its publishers; the application only reads the public feeds from your browser.

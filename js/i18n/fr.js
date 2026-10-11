@@ -292,13 +292,13 @@
     'err.nascar.badField': 'Champ NASCAR invalide : {field}={value}',
     'err.nascar.notObject': 'Le flux NASCAR n\'est pas un objet JSON',
     'err.nascar.readFailed': 'Impossible de lire le flux NASCAR : {detail}',
-    'err.wec.badField': 'Champ WEC invalide : {field}={value}',
-    'err.wec.readFailed': 'Impossible de lire le flux WEC : {detail}',
-    'err.wec.badSessions': 'La liste des sessions WEC actives est invalide',
-    'err.wec.noRace': 'Aucune course active trouvée pour "{series}" ; indiquez un identifiant de session si connu',
-    'err.wec.badSchedule': 'Le planning live WEC n\'est pas une liste JSON',
-    'err.wec.badFlags': 'Le flux de drapeaux WEC n\'est pas une liste JSON',
-    'err.wec.noTrackFlag': 'Aucun drapeau piste entière pour la session WEC {id}',
+    'err.griiip.badField': 'Champ {name} invalide\u00a0: {field}={value}',
+    'err.griiip.readFailed': 'Impossible de lire le flux {name}\u00a0: {detail}',
+    'err.griiip.badSessions': 'La liste des sessions {name} actives est invalide',
+    'err.griiip.noRace': 'Aucune course active trouvée pour "{series}"\u00a0; indiquez un identifiant de session si connu',
+    'err.griiip.badSchedule': 'Le planning live {name} n\'est pas une liste JSON',
+    'err.griiip.badFlags': 'Le flux de drapeaux {name} n\'est pas une liste JSON',
+    'err.griiip.noTrackFlag': 'Aucun drapeau piste entière pour la session {name} {id}',
     'err.imsa.jsonpUnavailable': 'JSONP indisponible',
     'err.imsa.cancelled': 'annulé',
     'err.imsa.scriptFailed': 'chargement du script impossible',
@@ -335,5 +335,17 @@
     'err.replay.speedPositive': 'La vitesse de replay doit être supérieure à zéro',
     'err.replay.noLapOffsets': 'Cet enregistrement ne contient pas les offsets des tours',
     'err.replay.lapMissing': 'Le tour {lap} est absent de l\'enregistrement'
+  });
+
+  /* ---------- ELMS et sessions griiip ---------- */
+  root.RF.addMessages('fr', {
+    'race.elmsSession': 'Session ELMS',
+    'tip.wecSession': 'Numéro de la session WEC à suivre. Vide : la course WEC en cours est trouvée automatiquement.',
+    'tip.elmsSession': 'Numéro de la session ELMS à suivre. Vide : la course ELMS en cours est trouvée automatiquement.',
+    'settings.name.elmsSession': 'Session ELMS',
+    'settings.field.elms.seriesName': 'Série ELMS',
+    'settings.field.elms.apiUrl': 'API ELMS',
+    'settings.tip.elms.seriesName': 'Nom exact de la série utilisé pour détecter automatiquement la course ELMS en cours.',
+    'settings.tip.elms.apiUrl': 'Adresse de l\'API de chronométrage ELMS (la même que pour le WEC). À modifier seulement si elle change.'
   });
 })(typeof window !== 'undefined' ? window : global);

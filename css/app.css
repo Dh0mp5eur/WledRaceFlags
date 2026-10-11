@@ -96,6 +96,7 @@ label:focus-within .name[data-tip]::after { display:block; top:auto; bottom:calc
 /* Logos officiels des championnats (dossier img/, voir img/README.md) */
 .tab .logo { width:auto; height:28px; flex:none; opacity:.8; transition:opacity .12s; }
 .tab .logo-nascar { height:20px; } .tab .logo-imsa { height:30px; }
+.tab .logo-elms { height:30px; border-radius:4px; }       /* logo sur fond blanc (JPEG d'origine) : coins arrondis, lisible aussi en thème sombre */
 .tab.active .logo, .tab:hover:not(:disabled) .logo { opacity:1; }
 .tab:disabled .logo { opacity:.5; } .tab.active:disabled .logo { opacity:1; }
 /* Le logo WEC est noir : on l'inverse en thème sombre pour qu'il reste lisible. */
@@ -119,3 +120,8 @@ h1 { white-space:nowrap; }
 .row > label { min-width:0; max-width:100%; }
 @media (max-width:600px) { #arc-race { min-width:0; width:100%; } }
 @media (max-width:600px) { .tab { padding:10px 12px; } .tabs { gap:2px; } }
+/* Quatre onglets de championnat sur une ligne à 390 px de large. */
+@media (max-width:480px) {
+  .tab { padding:8px 6px; } .tabs { gap:2px; }
+  .tab .logo { height:22px; } .tab .logo-nascar { height:15px; } .tab .logo-imsa, .tab .logo-elms { height:24px; }
+}

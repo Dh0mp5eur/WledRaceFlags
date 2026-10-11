@@ -64,6 +64,7 @@
     });
     $('s-pollInterval').value = settings.source.pollInterval;
     $('s-sessionId').value = settings.wec.sessionId == null ? '' : settings.wec.sessionId;
+    $('s-elmsSessionId').value = settings.elms.sessionId == null ? '' : settings.elms.sessionId;
     $('tv-enabled').checked = settings.tvSync.enabled;
     $('tv-lap').value = settings.tvSync.initialTvLap;
     $('fixed-delay').value = settings.tvSync.fixedDelaySeconds;
@@ -82,12 +83,13 @@
     });
     raw.source.pollInterval = $('s-pollInterval').value;
     raw.wec.sessionId = $('s-sessionId').value;
+    raw.elms.sessionId = $('s-elmsSessionId').value;
     raw.tvSync.enabled = $('tv-enabled').checked;
     raw.tvSync.initialTvLap = $('tv-lap').value;
     raw.tvSync.fixedDelaySeconds = $('fixed-delay').value;
     raw.scan = { prefix: $('scan-prefix').value.trim(), from: $('scan-from').value, to: $('scan-to').value };
     var mode = $('mode').value;
-    if (mode === 'nascar' || mode === 'wec' || mode === 'imsa') raw.source.type = mode;
+    if (MODES.indexOf(mode) !== -1) raw.source.type = mode;
     return raw;
   }
 
@@ -296,8 +298,8 @@
   }
 
   /* ---------- Race ---------- */
-  var CHAMPIONSHIP_NAMES = { nascar: 'NASCAR', wec: 'FIA WEC', imsa: 'IMSA' };
-  var MODES = ['nascar', 'wec', 'imsa'];      // les championnats ; le replay est une section de chaque onglet
+  var CHAMPIONSHIP_NAMES = { nascar: 'NASCAR', wec: 'FIA WEC', imsa: 'IMSA', elms: 'ELMS' };
+  var MODES = ['nascar', 'wec', 'imsa', 'elms'];      // les championnats ; le replay est une section de chaque onglet
   /* Sélection du championnat par onglets ; #mode (champ caché) garde la valeur lue par le reste du code. */
   function setMode(mode, save) {
     if (MODES.indexOf(mode) === -1) mode = 'nascar';
@@ -315,7 +317,7 @@
   function updateModeVisibility() {
     var mode = $('mode').value;
     function toggle(cls, show) { Array.prototype.forEach.call(document.querySelectorAll('.' + cls), function (el) { el.classList.toggle('hidden-mode', !show); }); }
-    toggle('mode-wec', mode === 'wec'); toggle('mode-nascar', mode === 'nascar'); toggle('mode-fixed', mode === 'wec' || mode === 'imsa');
+    toggle('mode-wec', mode === 'wec'); toggle('mode-elms', mode === 'elms'); toggle('mode-nascar', mode === 'nascar'); toggle('mode-fixed', mode === 'wec' || mode === 'imsa' || mode === 'elms');
     var archive = replayUsesArchive();
     toggle('arc-only', archive); toggle('file-only', !archive);
   }
@@ -399,6 +401,7 @@
     if (mode === 'nascar') return Promise.resolve(new RF.NascarSource({ timeout: settings.source.requestTimeout, lapSampleSize: settings.tvSync.sampleSize }));
     if (mode === 'imsa') return Promise.resolve(new RF.ImsaSource({ apiUrl: settings.imsa.apiUrl, raceOnly: settings.imsa.raceOnly, timeout: settings.source.requestTimeout }));
     if (mode === 'wec') return Promise.resolve(new RF.WecSource({ sessionId: settings.wec.sessionId, apiUrl: settings.wec.apiUrl, seriesName: settings.wec.seriesName, timeout: settings.source.requestTimeout }));
+    if (mode === 'elms') return Promise.resolve(new RF.WecSource({ name: 'elms', label: 'ELMS', sessionId: settings.elms.sessionId, apiUrl: settings.elms.apiUrl, seriesName: settings.elms.seriesName, timeout: settings.source.requestTimeout }));
     var fromArchive = replayUsesArchive();
     var docPromise;
     if (fromArchive) {
@@ -465,7 +468,7 @@
       }
       var sync = null;
       if (mode === 'nascar' && settings.tvSync.enabled) sync = new RF.NascarTvSynchronizer({ initialTvLap: settings.tvSync.initialTvLap, fallbackLapSeconds: settings.tvSync.fallbackLapSeconds, maximumDelay: settings.tvSync.maximumDelay });
-      else if (mode === 'wec' || mode === 'imsa') sync = new RF.FixedDelaySynchronizer({ delaySeconds: settings.tvSync.fixedDelaySeconds });   // toujours créé : réglable en cours de course
+      else if (mode === 'wec' || mode === 'imsa' || mode === 'elms') sync = new RF.FixedDelaySynchronizer({ delaySeconds: settings.tvSync.fixedDelaySeconds });   // toujours créé : réglable en cours de course
       var interval = mode === 'replay' ? 0 : settings.source.pollInterval;
       run = { ctrl: ctrl, recorder: recorder, sync: sync, kind: kind, source: source }; _lastRec = recorder;
       setRunning(true, kind); acquireWakeLock(); setBadge(null, 'flag.waiting');
