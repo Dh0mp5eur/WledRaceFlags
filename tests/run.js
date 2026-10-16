@@ -12,7 +12,7 @@ if (!global.AbortController) {
 global.window = undefined;
 var js = path.join(__dirname, '..', 'js');
 global.RF = undefined;
-['core', 'i18n', 'i18n/fr', 'i18n/en', 'sources/nascar', 'sources/wec', 'sources/imsa', 'sources/replay', 'sync', 'wled', 'discovery', 'settings', 'recording', 'nascar-import', 'engine']
+['core', 'i18n', 'i18n/fr', 'i18n/en', 'sources/nascar', 'sources/wec', 'sources/imsa', 'sources/sro', 'sources/replay', 'sync', 'wled', 'discovery', 'settings', 'recording', 'nascar-import', 'engine']
   .forEach(function (f) { require(path.join(js, f + '.js')); });
 var RF = global.RF, F = RF.FlagState;
 RF.setLang('fr');          // les assertions sur les messages sont en français ; Node expose navigator.language, donc la détection ne suffit pas
@@ -166,6 +166,88 @@ test('ELMS : réglages par défaut et validation', function () {
   assert.equal(RF.validateSettings({ source: { type: 'elms' } }).source.type, 'elms');
   assert.equal(RF.validateSettings({ elms: { sessionId: '18210' } }).elms.sessionId, 18210);
   assert.throws(function () { RF.validateSettings({ elms: { sessionId: 0 } }); }, /Session ELMS/);
+});
+
+test('GTWC : codes TrackFlag de Swiss Timing (damier d\'abord, FCY / voiture de sécurité / code 60 = jaune)', function () {
+  var r = RF._sroInternals.resolveFlag;
+  assert.equal(r({ TrackFlag: 1 }), F.GREEN);
+  assert.equal(r({ TrackFlag: 4 }), F.YELLOW); assert.equal(r({ TrackFlag: 32 }), F.YELLOW); assert.equal(r({ TrackFlag: 64 }), F.YELLOW);
+  assert.equal(r({ TrackFlag: 8 }), F.RED); assert.equal(r({ TrackFlag: 8 | 32 }), F.RED);
+  assert.equal(r({ TrackFlag: 1, ChequeredFlag: true }), F.CHEQUERED);
+  assert.equal(r({ TrackFlag: 268435456 }), F.UNKNOWN);                       // tour de chauffe
+  assert.equal(r({ TrackFlag: 0 }), F.UNKNOWN); assert.equal(r(null), F.UNKNOWN);
+  assert.equal(RF._sroInternals.leaderLap({ a: { ListIndex: 1, MainResult: { TotalLapCount: 26 } }, b: { ListIndex: 0, MainResult: { TotalLapCount: 27 } } }), 27);
+});
+
+test('GTWC : découverte de la course, attente avant le départ, copie périmée ignorée', function () {
+  var GTWC = 'b9e4a2c3-ada0-4e0e-8c81-5e8f3574ae23', MEET = 'f7ed3638-c61a-4e0a-b7c4-1b0e90a4e620', RACE = '7ab0947f-e429-4b00-9f58-cbc78e143fdc';
+  var season = { content: { full: { Series: { x: { Id: GTWC, Name: 'GTWorldChEU pwrd by AWS Endurance Cup' }, y: { Id: 'gt4', Name: 'GT4 European Series' } },
+    Meetings: { m1: { Id: 'old', State: 2, Name: 'Barcelona' }, m2: { Id: MEET, State: 1, Name: 'Endurance Cup Round 10', Location: 'Portimao' } } } } };
+  var schedule = { content: { full: {
+    Competitions: { c1: { Id: 'c-gtwc', SerieId: GTWC, Name: 'GTWorldChEU pwrd by AWS Endurance Cup' }, c2: { Id: 'c-gt4', SerieId: 'gt4', Name: 'GT4 European Series' } },
+    Units: { u1: { Id: 'q1', Name: 'Qualifying 1', CompetitionId: 'c-gtwc', Type: 1, State: 2, BeginTime: '16.10.2026 17:55:00' },
+             u2: { Id: 'gt4r', Name: 'Race 1', CompetitionId: 'c-gt4', Type: 0, State: 1, BeginTime: '17.10.2026 13:45:00' },
+             u3: { Id: RACE, Name: 'Race', CompetitionId: 'c-gtwc', Type: 0, State: 0, BeginTime: '17.10.2026 17:00:00' } } } } };
+  var timing = null, urls = [];
+  return new Promise(function (resolve, reject) {
+    var srv = http.createServer(function (req, res) {
+      var u = req.url.split('?')[0]; urls.push(u);
+      res.setHeader('Content-Type', 'application/json');
+      if (u === '/SRO_SEASONS_JSON.json') return res.end(JSON.stringify({ content: { full: { CurrentSeason: '2026' } } }));
+      if (u === '/SRO_2026_SEASON_JSON.json') return res.end(JSON.stringify(season));
+      if (u === '/SRO_2026_SCHEDULE_' + MEET.toUpperCase() + '_JSON.json') return res.end(JSON.stringify(schedule));
+      if (u === '/SRO_2026_TIMING_' + RACE.toUpperCase() + '_JSON.json' && timing) return res.end(JSON.stringify(timing));
+      res.writeHead(404); res.end('{}');
+    });
+    srv.listen(0, '127.0.0.1', function () {
+      var clock = 1e12, src = new RF.SroSource({ apiUrl: 'http://127.0.0.1:' + srv.address().port, now: function () { return clock; } });
+      src.poll().then(function (snap) {
+        assert.equal(snap.source, 'gtwc');
+        assert.equal(snap.flag, F.UNKNOWN); assert.ok(/pas encore commencée.*17\.10\.2026 17:00:00/.test(snap.rawState), snap.rawState);   // course GTWC, pas la course GT4 en cours
+        assert.equal(snap.metadata.unit_id, RACE.toUpperCase());
+        timing = { uid: 50, content: { full: { UntInfo: { TrackFlag: 4, ChequeredFlag: false, RemainingTime: '2:41:05' },
+          Results: { a: { ListIndex: 0, MainResult: { TotalLapCount: 12 } } } } } };
+        var before = urls.length;
+        return src.poll().then(function (snap) {
+          assert.equal(snap.flag, F.UNKNOWN); assert.equal(urls.length, before, 'chrono absent il y a moins de 20 s : pas de nouvelle requête');
+          clock += 21000; return src.poll();
+        });
+      }).then(function (snap) {
+        assert.equal(snap.flag, F.YELLOW); assert.equal(snap.remainingSeconds, 9665); assert.equal(snap.lap, 12); assert.equal(snap.metadata.sync, 50);
+        timing = { uid: 40, content: { full: { UntInfo: { TrackFlag: 1, RemainingTime: '2:50:00' }, Results: {} } } };      // copie plus ancienne servie par le CDN
+        return src.poll();
+      }).then(function (snap) {
+        assert.equal(snap.flag, F.YELLOW); assert.equal(snap.metadata.sync, 50);
+        timing = { uid: 60, content: { full: { UntInfo: { TrackFlag: 1, RemainingTime: '2:40:00' }, Results: {} } } };
+        return src.poll();
+      }).then(function (snap) {
+        assert.equal(snap.flag, F.GREEN);
+        assert.equal(urls.filter(function (u) { return /SEASON_JSON/.test(u); }).length, 1, 'course en cours : le programme n\'est plus relu');
+        var api = 'http://127.0.0.1:' + srv.address().port;
+        return RF.listSroRaces({ apiUrl: api }).then(function (cat) {                    // menus de l'onglet : toutes les séries du meeting
+          assert.deepEqual(cat.series.map(function (x) { return x.name; }).sort(), ['GT4 European Series', 'GTWorldChEU pwrd by AWS Endurance Cup']);
+          assert.deepEqual(cat.races.map(function (r) { return r.name + '/' + r.state; }), ['Race 1/1', 'Race/0']);       // triées par heure, les essais exclus
+          return Promise.all([new RF.SroSource({ apiUrl: api, series: 'all' }).poll(), new RF.SroSource({ apiUrl: api, series: 'gt4' }).poll(),
+                              new RF.SroSource({ apiUrl: api, unitId: 'gt4r' }).poll()]);
+        }).then(function (snaps) {
+          snaps.forEach(function (snap) { assert.equal(snap.metadata.unit_id, 'GT4R'); assert.equal(snap.metadata.series_name, 'GT4 European Series'); });  // toutes les séries : la course en cours
+        });
+      }).then(function () { srv.close(); resolve(); }, function (e) { srv.close(); reject(e); });
+    });
+  });
+});
+
+test('GTWC : réglages par défaut et validation de la séance imposée', function () {
+  var d = RF.defaultSettings();
+  assert.equal(d.gtwc.unitId, null); assert.equal(d.gtwc.seriesMatch, 'GTWorldChEU'); assert.ok(/swisstiming/.test(d.gtwc.apiUrl));
+  assert.equal(RF.validateSettings({ source: { type: 'gtwc' } }).source.type, 'gtwc');
+  assert.equal(RF.validateSettings({ gtwc: { unitId: ' 7ab0947f-e429-4b00-9f58-cbc78e143fdc ' } }).gtwc.unitId, '7AB0947F-E429-4B00-9F58-CBC78E143FDC');
+  assert.equal(RF.validateSettings({ gtwc: { unitId: '' } }).gtwc.unitId, null);
+  assert.throws(function () { RF.validateSettings({ gtwc: { unitId: '1234' } }); }, /Séance GTWC invalide/);
+  assert.equal(d.gtwc.series, null);
+  assert.equal(RF.validateSettings({ gtwc: { series: 'all' } }).gtwc.series, 'all');
+  assert.equal(RF.validateSettings({ gtwc: { series: '1C99DDB2-D92D-428A-926F-FAE5B7C162F8' } }).gtwc.series, '1c99ddb2-d92d-428a-926f-fae5b7c162f8');
+  assert.throws(function () { RF.validateSettings({ gtwc: { series: 'GT4' } }); }, /Série GTWC invalide/);
 });
 
 test('médiane, durées, dates', function () {

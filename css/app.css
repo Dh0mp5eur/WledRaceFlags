@@ -25,6 +25,12 @@ button.primary { background:var(--accent); border-color:var(--accent); color:#ff
 button.small { padding:2px 8px; font-size:.75rem; }
 table { width:100%; border-collapse:collapse; } th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); font-size:.9rem; }
 td.status.ok { color:var(--green); } td.status.ko { color:var(--err); }
+.table-scroll { overflow-x:auto; }            /* une table trop large défile seule, sans faire déborder la page */
+@media (max-width:480px) {
+  #devices th, #devices td { padding:6px 4px; }
+  #devices input[type=text] { min-width:0; width:100%; max-width:9em; }
+  #devices td:nth-child(3) { word-break:break-all; }
+}
 .hint { color:var(--muted); font-size:.85rem; margin:4px 0; } .error { color:var(--err); }
 .notice { margin:0 0 10px; padding:8px 12px; border:1px solid var(--line); border-left:4px solid var(--yellow); border-radius:5px; background:var(--bg); font-size:.9rem; }
 .notice.error { border-left-color:var(--err); color:var(--fg); }
@@ -96,7 +102,8 @@ label:focus-within .name[data-tip]::after { display:block; top:auto; bottom:calc
 /* Logos officiels des championnats (dossier img/, voir img/README.md) */
 .tab .logo { width:auto; height:28px; flex:none; opacity:.8; transition:opacity .12s; }
 .tab .logo-nascar { height:20px; } .tab .logo-imsa { height:30px; }
-.tab .logo-elms { height:30px; border-radius:4px; }       /* logo sur fond blanc (JPEG d'origine) : coins arrondis, lisible aussi en thème sombre */
+.tab .logo-elms { height:30px; border-radius:4px; }
+.tab .logo-gtwc { height:26px; border-radius:4px; }       /* idem : fond blanc d'origine, texte noir illisible sur fond sombre sans lui */       /* logo sur fond blanc (JPEG d'origine) : coins arrondis, lisible aussi en thème sombre */
 .tab.active .logo, .tab:hover:not(:disabled) .logo { opacity:1; }
 .tab:disabled .logo { opacity:.5; } .tab.active:disabled .logo { opacity:1; }
 /* Le logo WEC est noir : on l'inverse en thème sombre pour qu'il reste lisible. */
@@ -117,11 +124,14 @@ h1 { white-space:nowrap; }
 @media (max-width:420px) { .brand-logo { width:32px; height:32px; } h1 { font-size:1rem; } }
 /* Menu des courses d'archive : large sur écran large, jamais plus large que l'écran sur téléphone */
 #arc-race { min-width:22em; max-width:100%; }
+#gtwc-series, #gtwc-race { max-width:100%; }    /* noms de série et de course longs : jamais plus large que la page */
+.mode-gtwc label { max-width:100%; }
 .row > label { min-width:0; max-width:100%; }
-@media (max-width:600px) { #arc-race { min-width:0; width:100%; } }
+@media (max-width:600px) { #arc-race, #gtwc-series, #gtwc-race { min-width:0; width:100%; } }
 @media (max-width:600px) { .tab { padding:10px 12px; } .tabs { gap:2px; } }
-/* Quatre onglets de championnat sur une ligne à 390 px de large. */
+/* Onglets de championnat sur une seule ligne à 390 px : chaque onglet prend une part égale, le logo se réduit pour y tenir. */
 @media (max-width:480px) {
-  .tab { padding:8px 6px; } .tabs { gap:2px; }
-  .tab .logo { height:22px; } .tab .logo-nascar { height:15px; } .tab .logo-imsa, .tab .logo-elms { height:24px; }
+  .tabs { gap:2px; flex-wrap:nowrap; }
+  .tab { flex:1 1 0; min-width:0; justify-content:center; padding:8px 3px; }
+  .tab .logo { height:auto; max-width:100%; max-height:22px; } .tab .logo-nascar { max-height:14px; } .tab .logo-imsa { max-height:24px; }
 }

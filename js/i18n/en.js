@@ -348,4 +348,35 @@
     'settings.tip.elms.seriesName': 'Exact series name used to automatically detect the ELMS race in progress.',
     'settings.tip.elms.apiUrl': 'Address of the ELMS timing API (the same as for WEC). Change it only if it changes.'
   });
+
+  /* ---------- GT World Challenge Europe (Swiss Timing) ---------- */
+  root.RF.addMessages('en', {
+    'race.gtwcUnit': 'Race',
+    'tip.gtwcUnit': 'Race to follow among those of the current SRO meeting. Automatic: the race in progress of the chosen series, otherwise the next one.',
+    'settings.field.gtwc.seriesMatch': 'GTWC series (search)',
+    'settings.field.gtwc.apiUrl': 'GTWC API',
+    'settings.tip.gtwc.seriesMatch': 'Part of the Swiss Timing series name used for the “default” series of the GTWC tab, case-insensitive. Empty: GTWorldChEU (Endurance and Sprint Cup).',
+    'settings.tip.gtwc.apiUrl': 'Address of the Swiss Timing data for GT World Challenge Europe. Change it only if it changes.',
+    'settings.err.gtwcUnit': 'Invalid GTWC session: a Swiss Timing ID is expected (e.g. 7AB0947F-E429-4B00-9F58-CBC78E143FDC)',
+    'err.sro.readFailed': 'Unable to read the {name} feed: {detail}',
+    'err.sro.badData': 'The {name} feed is invalid',
+    'err.sro.noRace': 'No {name} race scheduled in a running meeting',
+    'err.sro.notStarted': 'race not started yet: {race}, scheduled start {start} (track time)'
+  });
+
+  /* ---------- GTWC tab: SRO series and races ---------- */
+  root.RF.addMessages('en', {
+    'race.gtwcSeries': 'Series',
+    'tip.gtwcSeries': 'SRO series to follow: GT World Challenge Europe by default, or a support series of the meeting (GT4, GT2…). All series: the race in progress, whatever the series.',
+    'gtwc.defaultSeries': 'GT World Challenge Europe (default)',
+    'gtwc.allSeries': 'All series',
+    'gtwc.autoRace': 'Automatic (in progress, otherwise the next one)',
+    'gtwc.raceOption': '{day} {time} · {name} · {series} ({state})',
+    'gtwc.stateNotStarted': 'upcoming',
+    'gtwc.stateRunning': 'in progress',
+    'gtwc.stateFinished': 'finished',
+    'gtwc.loading': 'Loading the SRO meeting schedule…',
+    'gtwc.noMeeting': 'No SRO meeting in progress: the menus will fill in when a meeting is active.',
+    'settings.err.gtwcSeries': 'Invalid GTWC series: a Swiss Timing ID or “all” is expected'
+  });
 })(typeof window !== 'undefined' ? window : global);

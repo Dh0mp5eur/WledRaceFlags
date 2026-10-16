@@ -9,6 +9,7 @@ Files used as the icons of the Race page tabs. They are stored here so the appli
 | `nascar.svg` | NASCAR | https://commons.wikimedia.org/wiki/File:NASCAR.svg | Public domain (Wikimedia Commons) |
 | `wec.svg` | FIA World Endurance Championship | https://commons.wikimedia.org/wiki/File:WEC_Logo.svg | Public domain (Wikimedia Commons) |
 | `imsa.svg` | IMSA WeatherTech SportsCar Championship | https://commons.wikimedia.org/wiki/File:IMSA_SportsCar_Championship_logo.svg | Public domain (Wikimedia Commons) |
+| `gtwc.png` | GT World Challenge (SRO) | https://www.vhv.rs/viewpic/hoRmTRo_gt-world-challenge-logo-hd-png-download/ | “Personal Use Only” according to that site, which only rehosts the SRO logo |
 | `elms.png` | European Le Mans Series | https://commons.wikimedia.org/wiki/File:European_Le_Mans_Series_Logo.jpg | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), author Kobokem2021 |
 
 The NASCAR, WEC and IMSA files are marked “trademarked” on Wikimedia Commons: the copyright is free but they are **registered trademarks** of their owners
@@ -16,6 +17,9 @@ The NASCAR, WEC and IMSA files are marked “trademarked” on Wikimedia Commons
 
 `elms.png` is a modified copy of the Commons file (3200 × 1387 JPEG): white margins cropped and resized to 360 px wide. It remains under CC BY-SA 4.0,
 credit: “European Le Mans Series Logo” by Kobokem2021, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), via Wikimedia Commons, cropped and resized.
+
+`gtwc.png` is not from Wikimedia Commons, which has no GT World Challenge logo: the project owner chose this file knowingly. It is the SRO Motorsports Group trademark,
+white margins cropped and resized to 360 px wide. If you redistribute this project, you may prefer to remove it or replace it with a logo whose license you have checked.
 
 Before adding or replacing a logo: check the license on the file's Wikimedia Commons page and update this table.
 

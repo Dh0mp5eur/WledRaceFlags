@@ -10,6 +10,7 @@
             releaseOnExit: true, restoreState: true, greenPreset: null, yellowPreset: null, redPreset: null },
     wec: { sessionId: null, apiUrl: 'https://insights.griiip.com', seriesName: 'FIA World Endurance Championship' },
     elms: { sessionId: null, apiUrl: 'https://insights.griiip.com', seriesName: 'European Le Mans Series' },
+    gtwc: { series: null, unitId: null, apiUrl: 'https://ps-cache.web.swisstiming.com/node/db/RAC_PROD', seriesMatch: 'GTWorldChEU' },   // series : null (seriesMatch), 'all' ou identifiant de série
     imsa: { apiUrl: 'https://dcqsrdkhg933g.cloudfront.net', raceOnly: true },
     tvSync: { enabled: false, fixedDelaySeconds: 0, initialTvLap: 1, sampleSize: 5, fallbackLapSeconds: 45.0, maximumDelay: 600.0 },
     devices: [],           // [{ url, name, enabled }]
@@ -37,6 +38,8 @@
     ['wec', 'apiUrl', 'text', {}],
     ['elms', 'seriesName', 'text', {}],
     ['elms', 'apiUrl', 'text', {}],
+    ['gtwc', 'seriesMatch', 'text', {}],
+    ['gtwc', 'apiUrl', 'text', {}],
     ['imsa', 'raceOnly', 'checkbox', {}],
     ['imsa', 'apiUrl', 'text', {}]
   ];
@@ -56,10 +59,10 @@
   /* Fusionne avec les valeurs par défaut et valide. Lève une Error (message dans la langue courante) si invalide. */
   RF.validateSettings = function (raw) {
     var D = RF.DEFAULT_SETTINGS, r = obj(raw);
-    var s = obj(r.source), w = obj(r.wled), c = obj(r.wec), el = obj(r.elms), im = obj(r.imsa), t = obj(r.tvSync), sc = obj(r.scan);
+    var s = obj(r.source), w = obj(r.wled), c = obj(r.wec), el = obj(r.elms), gt = obj(r.gtwc), im = obj(r.imsa), t = obj(r.tvSync), sc = obj(r.scan);
     var out = {
       source: {
-        type: ['nascar', 'wec', 'imsa', 'elms'].indexOf(s.type == null ? D.source.type : s.type) !== -1 ? (s.type || D.source.type) : (function () { throw new Error(RF.t('settings.err.sourceType')); })(),
+        type: ['nascar', 'wec', 'imsa', 'elms', 'gtwc'].indexOf(s.type == null ? D.source.type : s.type) !== -1 ? (s.type || D.source.type) : (function () { throw new Error(RF.t('settings.err.sourceType')); })(),
         pollInterval: num(s.pollInterval == null ? D.source.pollInterval : s.pollInterval, 'settings.name.pollInterval', 0.2, 3600),
         requestTimeout: num(s.requestTimeout == null ? D.source.requestTimeout : s.requestTimeout, 'settings.name.sourceTimeout', 0.5, 120)
       },
@@ -82,6 +85,15 @@
       elms: {
         sessionId: el.sessionId == null || el.sessionId === '' ? null : num(el.sessionId, 'settings.name.elmsSession', 1, 1000000, true),
         apiUrl: String(el.apiUrl || D.elms.apiUrl), seriesName: String(el.seriesName || D.elms.seriesName)
+      },
+      gtwc: {
+        unitId: gt.unitId == null || String(gt.unitId).trim() === '' ? null
+          : /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(gt.unitId).trim()) ? String(gt.unitId).trim().toUpperCase()
+          : (function () { throw new Error(RF.t('settings.err.gtwcUnit')); })(),
+        series: gt.series == null || String(gt.series).trim() === '' ? null : String(gt.series).trim() === 'all' ? 'all'
+          : /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(gt.series).trim()) ? String(gt.series).trim().toLowerCase()
+          : (function () { throw new Error(RF.t('settings.err.gtwcSeries')); })(),
+        apiUrl: String(gt.apiUrl || D.gtwc.apiUrl), seriesMatch: String(gt.seriesMatch || D.gtwc.seriesMatch)
       },
       imsa: {
         apiUrl: String(im.apiUrl || D.imsa.apiUrl), raceOnly: im.raceOnly == null ? D.imsa.raceOnly : !!im.raceOnly

@@ -18,7 +18,7 @@
   function msgText(m) { return typeof m === 'string' ? m : RF.t(m.key, m.params); }
   /* Écrit un message dans un élément en gardant sa clé : un changement de langue le retraduit (voir refreshLanguage). */
   function setMsg(el, m) { el._msg = m || null; el.textContent = m ? msgText(m) : ''; }
-  var MSG_IDS = ['replay-msg', 'arc-status', 'delay-msg', 'scan-status', 'confirm-error', 'settings-error'];
+  var MSG_IDS = ['replay-msg', 'arc-status', 'delay-msg', 'scan-status', 'confirm-error', 'settings-error', 'gtwc-status'];
 
   /* data-i18n : texte de l'élément. data-i18n-attr : « attribut:clé;attribut:clé ». */
   function applyI18n(root) {
@@ -84,6 +84,7 @@
     raw.source.pollInterval = $('s-pollInterval').value;
     raw.wec.sessionId = $('s-sessionId').value;
     raw.elms.sessionId = $('s-elmsSessionId').value;
+    if ($('gtwc-series').options.length) { raw.gtwc.series = $('gtwc-series').value || null; raw.gtwc.unitId = $('gtwc-race').value || null; }   // menus pas encore remplis : réglages gardés
     raw.tvSync.enabled = $('tv-enabled').checked;
     raw.tvSync.initialTvLap = $('tv-lap').value;
     raw.tvSync.fixedDelaySeconds = $('fixed-delay').value;
@@ -298,8 +299,9 @@
   }
 
   /* ---------- Race ---------- */
-  var CHAMPIONSHIP_NAMES = { nascar: 'NASCAR', wec: 'FIA WEC', imsa: 'IMSA', elms: 'ELMS' };
-  var MODES = ['nascar', 'wec', 'imsa', 'elms'];      // les championnats ; le replay est une section de chaque onglet
+  var CHAMPIONSHIP_NAMES = { nascar: 'NASCAR', wec: 'FIA WEC', imsa: 'IMSA', elms: 'ELMS', gtwc: 'GT World Challenge Europe' };
+  var MODES = ['nascar', 'wec', 'imsa', 'elms', 'gtwc'];      // les championnats ; le replay est une section de chaque onglet
+  var FIXED_DELAY_MODES = ['wec', 'imsa', 'elms', 'gtwc'];      // sans tour pour la synchro TV : retard fixe et « Horloge de ma diffusion »
   /* Sélection du championnat par onglets ; #mode (champ caché) garde la valeur lue par le reste du code. */
   function setMode(mode, save) {
     if (MODES.indexOf(mode) === -1) mode = 'nascar';
@@ -309,7 +311,7 @@
       t.setAttribute('aria-selected', on ? 'true' : 'false'); t.tabIndex = on ? 0 : -1; t.classList.toggle('active', on);
     });
     updateModeVisibility();
-    loadArchive();
+    loadArchive(); loadSroCatalog();
     if ($('replay-msg')) replayMsg('', 'hint');
     if (save) { commit(); localSet('mode', mode); }
   }
@@ -317,7 +319,7 @@
   function updateModeVisibility() {
     var mode = $('mode').value;
     function toggle(cls, show) { Array.prototype.forEach.call(document.querySelectorAll('.' + cls), function (el) { el.classList.toggle('hidden-mode', !show); }); }
-    toggle('mode-wec', mode === 'wec'); toggle('mode-elms', mode === 'elms'); toggle('mode-nascar', mode === 'nascar'); toggle('mode-fixed', mode === 'wec' || mode === 'imsa' || mode === 'elms');
+    toggle('mode-wec', mode === 'wec'); toggle('mode-elms', mode === 'elms'); toggle('mode-gtwc', mode === 'gtwc'); toggle('mode-nascar', mode === 'nascar'); toggle('mode-fixed', FIXED_DELAY_MODES.indexOf(mode) !== -1);
     var archive = replayUsesArchive();
     toggle('arc-only', archive); toggle('file-only', !archive);
   }
@@ -354,6 +356,41 @@
       archiveCache[key] = races; fillArchiveSelect(races);
       archiveStatus(races.length ? M('archive.available', { count: races.length }) : M('archive.none'), false);
     }, function (e) { if (token === archiveToken) archiveStatus(e.message, true); });
+  }
+
+  /* ---------- Onglet GT World Challenge Europe : séries et courses SRO du meeting en cours (Swiss Timing) ---------- */
+  var sroCatalog = null, sroCatalogAt = 0, sroToken = 0;
+  var SRO_STATE_KEYS = ['gtwc.stateNotStarted', 'gtwc.stateRunning', 'gtwc.stateFinished'];
+  function loadSroCatalog(force) {
+    if ($('mode').value !== 'gtwc') return;
+    if (sroCatalog && !force && Date.now() - sroCatalogAt < 60000) return fillSroSelects();
+    var token = ++sroToken;
+    if (!sroCatalog) setMsg($('gtwc-status'), M('gtwc.loading'));
+    RF.listSroRaces({ apiUrl: settings.gtwc.apiUrl, timeout: settings.source.requestTimeout }).then(function (cat) {
+      if (token !== sroToken) return;
+      sroCatalog = cat; sroCatalogAt = Date.now();
+      fillSroSelects();
+      setMsg($('gtwc-status'), cat.races.length ? null : M('gtwc.noMeeting'));
+    }, function (e) { if (token === sroToken) setMsg($('gtwc-status'), e.message); });
+  }
+  /* Remplit les deux menus d'après le catalogue et les réglages ; la course gardée n'est plus proposée si elle n'est pas de la série choisie. */
+  function fillSroSelects() {
+    if (!sroCatalog) return;
+    var ser = $('gtwc-series'), race = $('gtwc-race');
+    var wantSeries = ser.options.length ? ser.value : (settings.gtwc.series || ''), wantRace = race.options.length ? race.value : (settings.gtwc.unitId || '');
+    function opt(sel, value, text) { var o = document.createElement('option'); o.value = value; o.textContent = text; sel.appendChild(o); }
+    ser.textContent = '';
+    opt(ser, '', RF.t('gtwc.defaultSeries')); opt(ser, 'all', RF.t('gtwc.allSeries'));
+    sroCatalog.series.forEach(function (s) { opt(ser, String(s.id).toLowerCase(), s.name); });
+    ser.value = Array.prototype.some.call(ser.options, function (o) { return o.value === wantSeries; }) ? wantSeries : '';
+    race.textContent = '';
+    opt(race, '', RF.t('gtwc.autoRace'));
+    sroCatalog.races.filter(function (r) { return RF.sroMatchSeries(r, ser.value || null, settings.gtwc.seriesMatch); }).forEach(function (r) {
+      var d = /^(\d\d)\.(\d\d)\.(\d{4})\s+(\d\d:\d\d)/.exec(r.begin || '');
+      opt(race, r.id, RF.t('gtwc.raceOption', { day: d ? RF.formatDayMonth(d[3] + '-' + d[2] + '-' + d[1]) : '', time: d ? d[4] : '', name: r.name,
+        series: r.series, state: RF.t(SRO_STATE_KEYS[r.state] || 'gtwc.stateNotStarted') }));
+    });
+    race.value = Array.prototype.some.call(race.options, function (o) { return o.value === wantRace; }) ? wantRace : '';
   }
 
   /* Réglages de lecture lus à l'écran : servent au lancement et au recalage d'un replay en cours. */
@@ -401,6 +438,7 @@
     if (mode === 'nascar') return Promise.resolve(new RF.NascarSource({ timeout: settings.source.requestTimeout, lapSampleSize: settings.tvSync.sampleSize }));
     if (mode === 'imsa') return Promise.resolve(new RF.ImsaSource({ apiUrl: settings.imsa.apiUrl, raceOnly: settings.imsa.raceOnly, timeout: settings.source.requestTimeout }));
     if (mode === 'wec') return Promise.resolve(new RF.WecSource({ sessionId: settings.wec.sessionId, apiUrl: settings.wec.apiUrl, seriesName: settings.wec.seriesName, timeout: settings.source.requestTimeout }));
+    if (mode === 'gtwc') return Promise.resolve(new RF.SroSource({ series: settings.gtwc.series, unitId: settings.gtwc.unitId, apiUrl: settings.gtwc.apiUrl, seriesMatch: settings.gtwc.seriesMatch, timeout: settings.source.requestTimeout }));
     if (mode === 'elms') return Promise.resolve(new RF.WecSource({ name: 'elms', label: 'ELMS', sessionId: settings.elms.sessionId, apiUrl: settings.elms.apiUrl, seriesName: settings.elms.seriesName, timeout: settings.source.requestTimeout }));
     var fromArchive = replayUsesArchive();
     var docPromise;
@@ -468,7 +506,7 @@
       }
       var sync = null;
       if (mode === 'nascar' && settings.tvSync.enabled) sync = new RF.NascarTvSynchronizer({ initialTvLap: settings.tvSync.initialTvLap, fallbackLapSeconds: settings.tvSync.fallbackLapSeconds, maximumDelay: settings.tvSync.maximumDelay });
-      else if (mode === 'wec' || mode === 'imsa' || mode === 'elms') sync = new RF.FixedDelaySynchronizer({ delaySeconds: settings.tvSync.fixedDelaySeconds });   // toujours créé : réglable en cours de course
+      else if (FIXED_DELAY_MODES.indexOf(mode) !== -1) sync = new RF.FixedDelaySynchronizer({ delaySeconds: settings.tvSync.fixedDelaySeconds });   // toujours créé : réglable en cours de course
       var interval = mode === 'replay' ? 0 : settings.source.pollInterval;
       run = { ctrl: ctrl, recorder: recorder, sync: sync, kind: kind, source: source }; _lastRec = recorder;
       setRunning(true, kind); acquireWakeLock(); setBadge(null, 'flag.waiting');
@@ -688,6 +726,7 @@
     showLocalAccessNotice();
     updateReplayButton();
     if (archiveShown) fillArchiveSelect(archiveShown);
+    fillSroSelects();
     if (downloadCount != null) setDownloadLabel(downloadCount);
     if (progressState) setProgress(progressState.key, progressState.params);
     MSG_IDS.forEach(function (id) { var el = $(id); if (el._msg && typeof el._msg !== 'string') el.textContent = msgText(el._msg); });
@@ -759,6 +798,8 @@
     $('arc-year').addEventListener('change', loadArchive);
     $('arc-series').addEventListener('change', loadArchive);
     $('arc-race').addEventListener('change', function () { replayMsg('', 'hint'); });
+    $('gtwc-series').addEventListener('change', function () { fillSroSelects(); commit(); });
+    $('gtwc-race').addEventListener('change', commit);
     $('btn-export').onclick = exportConfig;
     $('import-config').onchange = function (e) { if (e.target.files[0]) importConfig(e.target.files[0]); e.target.value = ''; };
     $('btn-reset').onclick = function () { settings = RF.defaultSettings(); RF.saveSettings(settings); fillForms(); };

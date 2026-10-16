@@ -348,4 +348,35 @@
     'settings.tip.elms.seriesName': 'Nom exact de la série utilisé pour détecter automatiquement la course ELMS en cours.',
     'settings.tip.elms.apiUrl': 'Adresse de l\'API de chronométrage ELMS (la même que pour le WEC). À modifier seulement si elle change.'
   });
+
+  /* ---------- GT World Challenge Europe (Swiss Timing) ---------- */
+  root.RF.addMessages('fr', {
+    'race.gtwcUnit': 'Course',
+    'tip.gtwcUnit': 'Course à suivre parmi celles du meeting SRO en cours. Automatique : la course en cours de la série choisie, sinon la prochaine.',
+    'settings.field.gtwc.seriesMatch': 'Série GTWC (recherche)',
+    'settings.field.gtwc.apiUrl': 'API GTWC',
+    'settings.tip.gtwc.seriesMatch': 'Morceau du nom de série Swiss Timing utilisé pour la série « par défaut » de l\'onglet GTWC, sans tenir compte des majuscules. Vide : GTWorldChEU (Endurance et Sprint Cup).',
+    'settings.tip.gtwc.apiUrl': 'Adresse des données Swiss Timing du GT World Challenge Europe. À modifier seulement si elle change.',
+    'settings.err.gtwcUnit': 'Séance GTWC invalide : identifiant Swiss Timing attendu (ex. 7AB0947F-E429-4B00-9F58-CBC78E143FDC)',
+    'err.sro.readFailed': 'Impossible de lire le flux {name} : {detail}',
+    'err.sro.badData': 'Le flux {name} est invalide',
+    'err.sro.noRace': 'Aucune course {name} au programme d\'un meeting en cours',
+    'err.sro.notStarted': 'course pas encore commencée : {race}, départ prévu le {start} (heure du circuit)'
+  });
+
+  /* ---------- Onglet GTWC : séries et courses SRO ---------- */
+  root.RF.addMessages('fr', {
+    'race.gtwcSeries': 'Série',
+    'tip.gtwcSeries': 'Série SRO à suivre : GT World Challenge Europe par défaut, ou une série de soutien du meeting (GT4, GT2…). Toutes les séries : la course en cours, quelle que soit la série.',
+    'gtwc.defaultSeries': 'GT World Challenge Europe (par défaut)',
+    'gtwc.allSeries': 'Toutes les séries',
+    'gtwc.autoRace': 'Automatique (en cours, sinon la prochaine)',
+    'gtwc.raceOption': '{day} {time} · {name} · {series} ({state})',
+    'gtwc.stateNotStarted': 'à venir',
+    'gtwc.stateRunning': 'en cours',
+    'gtwc.stateFinished': 'terminée',
+    'gtwc.loading': 'Chargement du programme du meeting SRO…',
+    'gtwc.noMeeting': 'Aucun meeting SRO en cours : les menus se rempliront quand un meeting sera actif.',
+    'settings.err.gtwcSeries': 'Série GTWC invalide : identifiant Swiss Timing attendu, ou « all »'
+  });
 })(typeof window !== 'undefined' ? window : global);
