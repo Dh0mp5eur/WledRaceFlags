@@ -119,9 +119,9 @@ label:focus-within .name[data-tip]::after { display:block; top:auto; bottom:calc
 
 /* Logo de l'application à gauche de la barre du haut */
 h1 { display:flex; align-items:center; gap:10px; }
-.brand-logo { width:38px; height:38px; flex:none; }
+.brand-logo { width:46px; height:46px; flex:none; margin:-4px 0; }   /* dessin plus large que haut : un peu plus grand sans élargir la barre */
 h1 { white-space:nowrap; }
-@media (max-width:420px) { .brand-logo { width:32px; height:32px; } h1 { font-size:1rem; } }
+@media (max-width:420px) { .brand-logo { width:38px; height:38px; margin:-3px 0; } h1 { font-size:1rem; } }
 /* Menu des courses d'archive : large sur écran large, jamais plus large que l'écran sur téléphone */
 #arc-race { min-width:22em; max-width:100%; }
 #gtwc-series, #gtwc-race { max-width:100%; }    /* noms de série et de course longs : jamais plus large que la page */

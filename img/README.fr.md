@@ -25,6 +25,6 @@ Avant d'ajouter ou de remplacer un logo : vérifier la licence sur la page du fi
 
 ## Icônes de l'application
 
-`icon.svg`, `favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`, `icon-192.png` et `icon-512.png` sont des dessins **originaux** : un drapeau à damier qui flotte, dont les carreaux sombres prennent les couleurs des LED du vert au rouge,
+`icon.svg`, `favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`, `icon-192.png` et `icon-512.png` sont des dessins **originaux** : deux drapeaux à damier croisés en X (comme l'icône de l'onglet Race), dont les carreaux sombres prennent les couleurs des LED du vert au rouge,
 avec un contour orange. Les icônes ont un **fond transparent** (hampe gris moyen et contour orange pour rester lisibles sur fond clair comme sur fond sombre), sauf `apple-touch-icon.png`, volontairement opaque sur fond sombre : iOS remplit la transparence en noir. Ils ne reprennent aucun logo existant et ne sont pas soumis à une marque déposée. Ils sont générés par `tools/make-icons.py` (dépendance : `cairosvg`) :
 modifier les couleurs ou le dessin dans ce script, puis le relancer, plutôt que d'éditer les fichiers à la main.
