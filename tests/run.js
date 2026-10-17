@@ -12,7 +12,7 @@ if (!global.AbortController) {
 global.window = undefined;
 var js = path.join(__dirname, '..', 'js');
 global.RF = undefined;
-['core', 'i18n', 'i18n/fr', 'i18n/en', 'sources/nascar', 'sources/wec', 'sources/imsa', 'sources/sro', 'sources/replay', 'sync', 'wled', 'discovery', 'settings', 'recording', 'nascar-import', 'engine']
+['core', 'i18n', 'i18n/fr', 'i18n/en', 'sources/nascar', 'sources/wec', 'sources/imsa', 'sources/sro', 'sources/indycar', 'sources/replay', 'sync', 'wled', 'discovery', 'settings', 'recording', 'nascar-import', 'engine']
   .forEach(function (f) { require(path.join(js, f + '.js')); });
 var RF = global.RF, F = RF.FlagState;
 RF.setLang('fr');          // les assertions sur les messages sont en français ; Node expose navigator.language, donc la détection ne suffit pas
@@ -266,6 +266,60 @@ test('GTWC : découverte de la course, attente avant le départ, copie périmée
       }).then(function () { srv.close(); resolve(); }, function (e) { srv.close(); reject(e); });
     });
   });
+});
+
+test('IndyCar : drapeaux (damier avant rouge, blanc = vert, WARM et COLD inconnus)', function () {
+  var r = RF._indycarInternals.resolveFlag;
+  assert.equal(r('GREEN'), F.GREEN); assert.equal(r('WHITE'), F.GREEN); assert.equal(r('YELLOW'), F.YELLOW); assert.equal(r('RED'), F.RED);
+  assert.equal(r('CHECKERED'), F.CHEQUERED); assert.equal(r('Checkered Flag'), F.CHEQUERED);
+  assert.equal(r('WARM'), F.UNKNOWN); assert.equal(r('COLD'), F.UNKNOWN); assert.equal(r(''), F.UNKNOWN); assert.equal(r(null), F.UNKNOWN);
+});
+
+test('IndyCar : course, tour du leader, série et séances hors course', function () {
+  var hb = null, urls = [];
+  return new Promise(function (resolve, reject) {
+    var srv = http.createServer(function (req, res) {
+      urls.push(req.url);
+      res.setHeader('Content-Type', 'application/json');
+      if (req.url.split('?')[0] === '/racecontrol/timingscoring-ris.json') return res.end(JSON.stringify({ timing_results: { heartbeat: hb, Item: [] } }));
+      res.writeHead(404); res.end('{}');
+    });
+    srv.listen(0, '127.0.0.1', function () {
+      var api = 'http://127.0.0.1:' + srv.address().port + '/racecontrol/';
+      function src(o) { return new RF.IndycarSource(Object.assign({ apiUrl: api }, o)); }
+      hb = { currentFlag: 'YELLOW', SessionStatus: 'YELLOW', SessionType: 'R', Series: 'I', lapNumber: '41', totalLaps: '100', overallTimeToGo: '0:00',
+             eventName: 'Firestone Grand Prix of St. Petersburg', SessionName: 'Race', trackName: 'Streets of St. Petersburg' };
+      src().poll().then(function (s) {
+        assert.equal(s.source, 'indycar'); assert.equal(s.flag, F.YELLOW); assert.equal(s.lap, 42); assert.equal(s.totalLaps, 100);
+        assert.equal(s.remainingSeconds, null, 'course aux tours : pas de temps restant');
+        assert.equal(s.metadata.series_name, 'NTT IndyCar Series'); assert.equal(s.metadata.event_name, 'Firestone Grand Prix of St. Petersburg');
+        assert.ok(/timingscoring-ris\.json\?\d+$/.test(urls[0]), 'adresse rendue unique à chaque relevé : ' + urls[0]);
+        hb = Object.assign({}, hb, { currentFlag: 'CHECKERED', lapNumber: '100' });
+        return src().poll();
+      }).then(function (s) {
+        assert.equal(s.flag, F.CHEQUERED); assert.equal(s.lap, 100);
+        return Promise.all([src({ series: 'L' }).poll(), src({ series: 'all' }).poll()]);
+      }).then(function (s) {
+        assert.equal(s[0].flag, F.UNKNOWN); assert.ok(/INDY NXT/.test(s[0].rawState), s[0].rawState);      // série INDY NXT demandée, séance IndyCar en piste
+        assert.equal(s[1].flag, F.CHEQUERED);
+        hb = { currentFlag: 'GREEN', SessionType: 'P', Series: 'L', SessionName: 'Practice 1', overallTimeToGo: '21:00' };
+        return Promise.all([src({ series: 'L' }).poll(), src({ series: 'L', raceOnly: false }).poll()]);
+      }).then(function (s) {
+        assert.equal(s[0].flag, F.UNKNOWN); assert.ok(/Practice 1/.test(s[0].rawState), s[0].rawState);
+        assert.equal(s[1].flag, F.GREEN); assert.equal(s[1].remainingSeconds, 1260); assert.equal(s[1].lap, null);
+        hb = null;
+        return src().poll().then(function () { throw new Error('format invalide accepté'); }, function (e) { assert.equal(e.name, 'SourceError'); });
+      }).then(function () { srv.close(); resolve(); }, function (e) { srv.close(); reject(e); });
+    });
+  });
+});
+
+test('IndyCar : réglages par défaut et validation de la série', function () {
+  var d = RF.defaultSettings();
+  assert.equal(d.indycar.series, 'I'); assert.equal(d.indycar.raceOnly, true); assert.ok(/indycar\.blob\.core\.windows\.net/.test(d.indycar.apiUrl));
+  assert.equal(RF.validateSettings({ source: { type: 'indycar' }, indycar: { series: 'L' } }).indycar.series, 'L');
+  assert.equal(RF.validateSettings({ indycar: { series: 'all' } }).indycar.series, 'all');
+  assert.throws(function () { RF.validateSettings({ indycar: { series: 'X' } }); });
 });
 
 test('GTWC : réglages par défaut et validation de la séance imposée', function () {

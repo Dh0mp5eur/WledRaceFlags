@@ -9,11 +9,12 @@ Fichiers utilisés comme icônes des onglets de la page Race. Ils sont enregistr
 | `nascar.svg` | NASCAR | https://commons.wikimedia.org/wiki/File:NASCAR.svg | Domaine public (Wikimedia Commons) |
 | `wec.svg` | FIA World Endurance Championship | https://commons.wikimedia.org/wiki/File:WEC_Logo.svg | Domaine public (Wikimedia Commons) |
 | `imsa.svg` | IMSA WeatherTech SportsCar Championship | https://commons.wikimedia.org/wiki/File:IMSA_SportsCar_Championship_logo.svg | Domaine public (Wikimedia Commons) |
+| `indycar.svg` | NTT IndyCar Series | https://commons.wikimedia.org/wiki/File:IndyCar_Series_textlogo.svg | Domaine public (Wikimedia Commons), vectorisé par VulcanSphere |
 | `gtwc.png` | GT World Challenge (SRO) | https://www.vhv.rs/viewpic/hoRmTRo_gt-world-challenge-logo-hd-png-download/ | « Personal Use Only » selon ce site, qui ne fait que rediffuser le logo de SRO |
 | `elms.png` | European Le Mans Series | https://commons.wikimedia.org/wiki/File:European_Le_Mans_Series_Logo.jpg | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.fr), auteur Kobokem2021 |
 
-Les fichiers NASCAR, WEC et IMSA sont marqués « trademarked » sur Wikimedia Commons : le droit d'auteur est libre mais ce sont des **marques déposées** de leurs propriétaires
-(NASCAR, FIA et ACO, IMSA). Le logo ELMS est lui aussi une marque de l'ACO. Elles servent ici uniquement à identifier le championnat suivi, dans un outil personnel. Ce projet n'est affilié à aucun d'eux.
+Les fichiers NASCAR, WEC, IMSA et IndyCar sont marqués « trademarked » sur Wikimedia Commons : le droit d'auteur est libre mais ce sont des **marques déposées** de leurs propriétaires
+(NASCAR, FIA et ACO, IMSA, INDYCAR LLC). Le logo IndyCar est noir : il est inversé en thème sombre. Le logo ELMS est lui aussi une marque de l'ACO. Elles servent ici uniquement à identifier le championnat suivi, dans un outil personnel. Ce projet n'est affilié à aucun d'eux.
 
 `elms.png` est une copie modifiée du fichier de Commons (JPEG 3200 × 1387) : marges blanches recadrées, réduit à 360 px de large. Il reste sous CC BY-SA 4.0,
 crédit : « European Le Mans Series Logo » par Kobokem2021, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.fr), via Wikimedia Commons, recadré et réduit.

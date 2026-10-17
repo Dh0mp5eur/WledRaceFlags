@@ -103,6 +103,7 @@ label:focus-within .name[data-tip]::after { display:block; top:auto; bottom:calc
 .tab .logo { width:auto; height:28px; flex:none; opacity:.8; transition:opacity .12s; }
 .tab .logo-nascar { height:20px; } .tab .logo-imsa { height:30px; }
 .tab .logo-elms { height:30px; border-radius:4px; }
+.tab .logo-indycar { height:18px; }
 .tab .logo-gtwc { height:26px; border-radius:4px; }       /* idem : fond blanc d'origine, texte noir illisible sur fond sombre sans lui */       /* logo sur fond blanc (JPEG d'origine) : coins arrondis, lisible aussi en thème sombre */
 .tab.active .logo, .tab:hover:not(:disabled) .logo { opacity:1; }
 .tab:disabled .logo { opacity:.5; } .tab.active:disabled .logo { opacity:1; }

@@ -5,7 +5,7 @@
 Follow the flags of a motor race live and mirror them on your [WLED](https://kno.wled.ge/) LED strips:
 the room turns yellow during a caution, red when the race is stopped, and blinks green at the restart.
 
-Supported championships: **NASCAR**, **FIA WEC**, **European Le Mans Series (ELMS)**, **IMSA WeatherTech** and **GT World Challenge Europe**.
+Supported championships: **NASCAR**, **FIA WEC**, **European Le Mans Series (ELMS)**, **IMSA WeatherTech**, **GT World Challenge Europe** and **NTT IndyCar Series** (with INDY NXT).
 
 The application runs **entirely in the browser**: plain HTML, CSS and JavaScript, no build step, no dependency
 and no application server. Just serve the files (or open `index.html`) on a device on the same network as your WLEDs.
@@ -14,7 +14,7 @@ and no application server. Just serve the files (or open `index.html`) on a devi
 
 ## Features
 
-- **Live tracking** of the public timing feeds of NASCAR, FIA WEC, ELMS, IMSA and GT World Challenge Europe (Endurance and Sprint Cup).
+- **Live tracking** of the public timing feeds of NASCAR, FIA WEC, ELMS, IMSA, GT World Challenge Europe (Endurance and Sprint Cup) and IndyCar (NTT IndyCar Series or INDY NXT, your choice).
   The WEC and ELMS tabs can also follow practice, qualifying and hyperpole: choose *Session in progress* or a specific session of the weekend
   (the menu lists the sessions present in the live feed). The GTWC tab also offers the support races of the SRO meeting (GT4, GT2, McLaren Trophy…): pick the *Series* and the *Race*, or let *Automatic* follow the race in progress.
 - **Strip effects**:
@@ -27,7 +27,7 @@ and no application server. Just serve the files (or open `index.html`) on a devi
 - **Joining mid-race**: a green flag already showing does not make the strip blink; a yellow or red flag is applied immediately.
 - **Broadcast synchronization**: the official timing is often a minute or more ahead of TV.
   - NASCAR: automatic synchronization based on lap times;
-  - WEC, ELMS, IMSA and GT World Challenge Europe: a “My broadcast clock” to match with the clock shown on your screen, adjustable during the race.
+  - WEC, ELMS, IMSA, GT World Challenge Europe and IndyCar: a “My broadcast clock” to match with the clock shown on your screen, adjustable during the race.
 - **Recording and replay**: every live session can be downloaded as JSON and replayed later,
   from a given time or lap, at any speed, and re-aligned while it runs.
 - **NASCAR archive**: replay any past race (Cup, Xfinity, Truck) straight from the official archive, no file needed.
@@ -43,7 +43,7 @@ Nothing to install, but it is served over https while WLEDs answer over http, wh
 | Chrome, Edge (desktop, Android) | Works once you **allow local network access** when the browser asks, the first time it reaches a WLED |
 | Firefox, Safari, any browser on iPhone or iPad | Cannot reach the WLEDs: use a local installation (below) |
 
-**FIA WEC** and **ELMS** live do not work from the online version (see “Known limitations”); NASCAR, IMSA, GT World Challenge Europe and replays do.
+**FIA WEC**, **ELMS** and **IndyCar** live do not work from the online version (see “Known limitations”); NASCAR, IMSA, GT World Challenge Europe and replays do.
 Devices must be given as a private IP address (`192.168.1.50`) or a local network name (`wled-xxxx.local`, `wled.lan`).
 If access was denied, restore it in the site settings (icon to the left of the address), then reload the page.
 The application shows a banner explaining the situation whenever the WLEDs are blocked.
@@ -93,7 +93,7 @@ Pick the championship with the tabs. Each tab has two sections:
 A recording can only be replayed in the tab of its own championship. NASCAR archive data is published
 a few hours after a race ends.
 
-**Matching the flags to your TV (WEC, ELMS, IMSA and GT World Challenge Europe)**: “My broadcast clock” runs and shows the time your broadcast
+**Matching the flags to your TV (WEC, ELMS, IMSA, GT World Challenge Europe and IndyCar)**: “My broadcast clock” runs and shows the time your broadcast
 should display with the current delay. Make it match your screen:
 
 - with the ▲ ▼ buttons of each segment (or the keyboard arrows): the delay changes at once;
@@ -143,7 +143,7 @@ css/app.css         Styles, light and dark themes
 js/core.js          Flags, errors, clock, unthrottled timers (Web Worker)
 js/i18n.js          Translations: RF.t(), current language, formats
 js/i18n/            One dictionary per language: fr.js, en.js
-js/sources/         One source per feed: nascar.js, wec.js (WEC and ELMS), imsa.js, sro.js (GT World Challenge Europe), replay.js
+js/sources/         One source per feed: nascar.js, wec.js (WEC and ELMS), imsa.js, sro.js (GT World Challenge Europe), indycar.js, replay.js
 js/engine.js        Tracking loop: flag changes, retries on error, delay
 js/sync.js          Broadcast synchronization (per lap or fixed delay)
 js/wled.js          WLED client and flag effects
@@ -194,6 +194,9 @@ rather than editing the images.
   (any port). From the online version, an IP address or a name such as `raceflags.lan`, the browser blocks the feed:
   run the application on the computer that watches the race (`python3 -m http.server 8000`, then `http://localhost:8000`).
   NASCAR, IMSA and replay work everywhere.
+- **IndyCar live: only from `http://localhost:3000`.** The official leaderboard feed only allows (CORS) that exact address, port included:
+  run `python3 -m http.server 3000` and open `http://localhost:3000` (every other championship works there too). Elsewhere, the IndyCar tab shows a warning.
+  By default only races are followed (“IndyCar: races only” in Settings). Replay works from a recording made live.
 - From a public page (such as the online version), Chrome and Edge ask for permission to access the local network; other browsers block the WLEDs.
 
 ## License
@@ -204,15 +207,15 @@ This project is free software, released under the **GNU General Public License v
 You may use, study, modify and redistribute it, including in an improved version.
 Any redistributed version, modified or not, must remain under GPL-3.0 and come with its source code.
 
-The championship logos (`img/nascar.svg`, `img/wec.svg`, `img/imsa.svg`, `img/elms.png`, `img/gtwc.png`) are not covered by this license (see below).
+The championship logos (`img/nascar.svg`, `img/wec.svg`, `img/imsa.svg`, `img/elms.png`, `img/gtwc.png`, `img/indycar.svg`) are not covered by this license (see below).
 
 ## Notices
 
-The NASCAR, FIA WEC, IMSA and ELMS logos shown in the tabs come from Wikimedia Commons (details in [`img/README.md`](img/README.md)).
-The NASCAR, FIA WEC and IMSA logos are in the public domain as far as copyright goes; the ELMS logo is by Kobokem2021, under
+The NASCAR, FIA WEC, IMSA, ELMS and IndyCar logos shown in the tabs come from Wikimedia Commons (details in [`img/README.md`](img/README.md)).
+The NASCAR, FIA WEC, IMSA and IndyCar logos are in the public domain as far as copyright goes; the ELMS logo is by Kobokem2021, under
 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), cropped and resized. The GT World Challenge logo is not from Wikimedia Commons
 (source in [`img/README.md`](img/README.md)). They are **registered trademarks** of their owners, used only to identify
 the championship being followed.
 
-This project is independent: it is not affiliated with NASCAR, the FIA, the ACO, the ELMS, IMSA or SRO Motorsports Group, nor with the WLED project.
+This project is independent: it is not affiliated with NASCAR, the FIA, the ACO, the ELMS, IMSA, SRO Motorsports Group or INDYCAR, nor with the WLED project.
 Race data belongs to its publishers; the application only reads the public feeds from your browser.

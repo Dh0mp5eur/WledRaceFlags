@@ -388,4 +388,24 @@
     'griiip.noSession': 'No session in progress in the feed: the menu will fill in when a session is active.',
     'err.griiip.noSession': 'No session in progress for "{series}"'
   });
+
+  /* IndyCar */
+  RF.addMessages('en', {
+    'race.indycarSeries': 'Series',
+    'tip.indycarSeries': 'Series to follow: NTT IndyCar Series or INDY NXT (same feed). Both series: the session in progress, whatever the series.',
+    'indycar.seriesIndycar': 'NTT IndyCar Series',
+    'indycar.seriesNxt': 'INDY NXT',
+    'indycar.seriesAll': 'Both series',
+    'indycar.originWarning': 'The IndyCar feed can only be read from {allowed}. Run “python3 -m http.server 3000” and open {allowed} (current page: {origin}).',
+    'settings.field.indycar.raceOnly': 'IndyCar: races only',
+    'settings.field.indycar.apiUrl': 'IndyCar API',
+    'settings.tip.indycar.raceOnly': 'Applies IndyCar flags only during a race. During practice and qualifying, the strip keeps its state. Uncheck to follow those sessions too.',
+    'settings.tip.indycar.apiUrl': 'Address of the IndyCar feed folder (timingscoring-ris.json). Change it only if IndyCar changes it.',
+    'settings.err.indycarSeries': 'Invalid IndyCar series: “I”, “L” or “all” expected',
+    'err.indycar.origin': 'IndyCar feed blocked by the browser: it can only be read from {allowed} (current page: {origin})',
+    'err.indycar.readFailed': 'Unable to read the IndyCar feed: {detail}',
+    'err.indycar.badData': 'The IndyCar feed does not have the expected format',
+    'err.indycar.otherSeries': 'no {series} session in progress (feed: {current})',
+    'err.indycar.notRace': 'not a race session: {session}'
+  });
 })(typeof window !== 'undefined' ? window : global);

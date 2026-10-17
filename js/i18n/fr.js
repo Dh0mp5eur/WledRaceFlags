@@ -388,4 +388,24 @@
     'griiip.noSession': 'Aucune session en cours dans le flux : le menu se remplira quand une session sera active.',
     'err.griiip.noSession': 'Aucune session en cours pour "{series}"'
   });
+
+  /* IndyCar */
+  RF.addMessages('fr', {
+    'race.indycarSeries': 'Série',
+    'tip.indycarSeries': 'Série à suivre : NTT IndyCar Series ou INDY NXT (même flux). Les deux séries : la séance en cours, quelle que soit la série.',
+    'indycar.seriesIndycar': 'NTT IndyCar Series',
+    'indycar.seriesNxt': 'INDY NXT',
+    'indycar.seriesAll': 'Les deux séries',
+    'indycar.originWarning': 'Le flux IndyCar n\'est lisible que depuis {allowed}. Lancez « python3 -m http.server 3000 » et ouvrez {allowed} (page actuelle : {origin}).',
+    'settings.field.indycar.raceOnly': 'IndyCar : courses seulement',
+    'settings.field.indycar.apiUrl': 'API IndyCar',
+    'settings.tip.indycar.raceOnly': 'N\'applique les drapeaux IndyCar que pendant une course. Pendant les essais et les qualifications, la bande garde son état. Décochez pour suivre aussi ces séances.',
+    'settings.tip.indycar.apiUrl': 'Adresse du dossier du flux IndyCar (timingscoring-ris.json). À modifier seulement si IndyCar la change.',
+    'settings.err.indycarSeries': 'Série IndyCar invalide : « I », « L » ou « all » attendu',
+    'err.indycar.origin': 'Flux IndyCar refusé par le navigateur : il n\'est lisible que depuis {allowed} (page actuelle : {origin})',
+    'err.indycar.readFailed': 'Impossible de lire le flux IndyCar : {detail}',
+    'err.indycar.badData': 'Le flux IndyCar n\'a pas le format attendu',
+    'err.indycar.otherSeries': 'pas de séance {series} en cours (flux : {current})',
+    'err.indycar.notRace': 'séance sans course : {session}'
+  });
 })(typeof window !== 'undefined' ? window : global);

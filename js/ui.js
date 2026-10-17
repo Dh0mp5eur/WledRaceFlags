@@ -18,7 +18,7 @@
   function msgText(m) { return typeof m === 'string' ? m : RF.t(m.key, m.params); }
   /* Écrit un message dans un élément en gardant sa clé : un changement de langue le retraduit (voir refreshLanguage). */
   function setMsg(el, m) { el._msg = m || null; el.textContent = m ? msgText(m) : ''; }
-  var MSG_IDS = ['replay-msg', 'arc-status', 'delay-msg', 'scan-status', 'confirm-error', 'settings-error', 'gtwc-status', 'wec-status', 'elms-status'];
+  var MSG_IDS = ['replay-msg', 'arc-status', 'delay-msg', 'scan-status', 'confirm-error', 'settings-error', 'gtwc-status', 'wec-status', 'elms-status', 'indycar-status'];
 
   /* data-i18n : texte de l'élément. data-i18n-attr : « attribut:clé;attribut:clé ». */
   function applyI18n(root) {
@@ -65,6 +65,7 @@
     $('s-pollInterval').value = settings.source.pollInterval;
     $('tv-enabled').checked = settings.tvSync.enabled;
     $('tv-lap').value = settings.tvSync.initialTvLap;
+    $('indycar-series').value = settings.indycar.series;
     $('fixed-delay').value = settings.tvSync.fixedDelaySeconds;
     if (settings.tvSync.fixedDelaySeconds > 0) delayMsg(M('clock.delay', { seconds: settings.tvSync.fixedDelaySeconds }), false);
     $('scan-prefix').value = settings.scan.prefix; $('scan-from').value = settings.scan.from; $('scan-to').value = settings.scan.to;
@@ -81,6 +82,7 @@
     });
     raw.source.pollInterval = $('s-pollInterval').value;
     Object.keys(GRIIIP_TABS).forEach(function (m) { var sel = $(GRIIIP_TABS[m].select); if (sel.options.length) raw[m].sessionId = sel.value || null; });   // menu pas encore rempli : réglage gardé
+    raw.indycar.series = $('indycar-series').value;
     if ($('gtwc-series').options.length) { raw.gtwc.series = $('gtwc-series').value || null; raw.gtwc.unitId = $('gtwc-race').value || null; }   // menus pas encore remplis : réglages gardés
     raw.tvSync.enabled = $('tv-enabled').checked;
     raw.tvSync.initialTvLap = $('tv-lap').value;
@@ -296,9 +298,9 @@
   }
 
   /* ---------- Race ---------- */
-  var CHAMPIONSHIP_NAMES = { nascar: 'NASCAR', wec: 'FIA WEC', imsa: 'IMSA', elms: 'ELMS', gtwc: 'GT World Challenge Europe' };
-  var MODES = ['nascar', 'wec', 'imsa', 'elms', 'gtwc'];      // les championnats ; le replay est une section de chaque onglet
-  var FIXED_DELAY_MODES = ['wec', 'imsa', 'elms', 'gtwc'];      // sans tour pour la synchro TV : retard fixe et « Horloge de ma diffusion »
+  var CHAMPIONSHIP_NAMES = { nascar: 'NASCAR', wec: 'FIA WEC', imsa: 'IMSA', elms: 'ELMS', gtwc: 'GT World Challenge Europe', indycar: 'IndyCar' };
+  var MODES = ['nascar', 'wec', 'imsa', 'elms', 'gtwc', 'indycar'];      // les championnats ; le replay est une section de chaque onglet
+  var FIXED_DELAY_MODES = ['wec', 'imsa', 'elms', 'gtwc', 'indycar'];      // sans tour pour la synchro TV : retard fixe et « Horloge de ma diffusion »
   /* Sélection du championnat par onglets ; #mode (champ caché) garde la valeur lue par le reste du code. */
   function setMode(mode, save) {
     if (MODES.indexOf(mode) === -1) mode = 'nascar';
@@ -316,9 +318,17 @@
   function updateModeVisibility() {
     var mode = $('mode').value;
     function toggle(cls, show) { Array.prototype.forEach.call(document.querySelectorAll('.' + cls), function (el) { el.classList.toggle('hidden-mode', !show); }); }
-    toggle('mode-wec', mode === 'wec'); toggle('mode-elms', mode === 'elms'); toggle('mode-gtwc', mode === 'gtwc'); toggle('mode-nascar', mode === 'nascar'); toggle('mode-fixed', FIXED_DELAY_MODES.indexOf(mode) !== -1);
+    toggle('mode-wec', mode === 'wec'); toggle('mode-elms', mode === 'elms'); toggle('mode-gtwc', mode === 'gtwc'); toggle('mode-indycar', mode === 'indycar'); toggle('mode-nascar', mode === 'nascar'); toggle('mode-fixed', FIXED_DELAY_MODES.indexOf(mode) !== -1);
+    indycarNotice();
     var archive = replayUsesArchive();
     toggle('arc-only', archive); toggle('file-only', !archive);
+  }
+
+  /* IndyCar : le flux n'autorise (CORS) que la page servie sur http://localhost:3000 ; ailleurs on le dit avant le lancement. */
+  function indycarNotice() {
+    var origin = location.origin, ok = origin === RF.INDYCAR_ALLOWED_ORIGIN;
+    $('indycar-status').hidden = ok;
+    setMsg($('indycar-status'), ok ? null : M('indycar.originWarning', { allowed: RF.INDYCAR_ALLOWED_ORIGIN, origin: /^https?:/.test(origin) ? origin : location.protocol }));
   }
 
   /* Message sous le bouton du replay : kind 'error' (rouge) ou 'hint' (gris). */
@@ -471,6 +481,7 @@
     if (mode === 'imsa') return Promise.resolve(new RF.ImsaSource({ apiUrl: settings.imsa.apiUrl, raceOnly: settings.imsa.raceOnly, timeout: settings.source.requestTimeout }));
     if (mode === 'wec') return Promise.resolve(new RF.WecSource({ sessionId: settings.wec.sessionId, apiUrl: settings.wec.apiUrl, seriesName: settings.wec.seriesName, timeout: settings.source.requestTimeout }));
     if (mode === 'gtwc') return Promise.resolve(new RF.SroSource({ series: settings.gtwc.series, unitId: settings.gtwc.unitId, apiUrl: settings.gtwc.apiUrl, seriesMatch: settings.gtwc.seriesMatch, timeout: settings.source.requestTimeout }));
+    if (mode === 'indycar') return Promise.resolve(new RF.IndycarSource({ series: settings.indycar.series, raceOnly: settings.indycar.raceOnly, apiUrl: settings.indycar.apiUrl, timeout: settings.source.requestTimeout }));
     if (mode === 'elms') return Promise.resolve(new RF.WecSource({ name: 'elms', label: 'ELMS', sessionId: settings.elms.sessionId, apiUrl: settings.elms.apiUrl, seriesName: settings.elms.seriesName, timeout: settings.source.requestTimeout }));
     var fromArchive = replayUsesArchive();
     var docPromise;
@@ -834,6 +845,7 @@
     $('gtwc-race').addEventListener('change', commit);
     $('wec-session').addEventListener('change', commit);
     $('elms-session').addEventListener('change', commit);
+    $('indycar-series').addEventListener('change', commit);
     $('btn-export').onclick = exportConfig;
     $('import-config').onchange = function (e) { if (e.target.files[0]) importConfig(e.target.files[0]); e.target.value = ''; };
     $('btn-reset').onclick = function () { settings = RF.defaultSettings(); RF.saveSettings(settings); fillForms(); };

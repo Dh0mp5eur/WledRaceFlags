@@ -12,6 +12,7 @@
     elms: { sessionId: null, apiUrl: 'https://insights.griiip.com', seriesName: 'European Le Mans Series' },
     gtwc: { series: null, unitId: null, apiUrl: 'https://ps-cache.web.swisstiming.com/node/db/RAC_PROD', seriesMatch: 'GTWorldChEU' },   // series : null (seriesMatch), 'all' ou identifiant de série
     imsa: { apiUrl: 'https://dcqsrdkhg933g.cloudfront.net', raceOnly: true },
+    indycar: { series: 'I', raceOnly: true, apiUrl: 'https://indycar.blob.core.windows.net/racecontrol' },   // series : 'I' IndyCar, 'L' INDY NXT, 'all'
     tvSync: { enabled: false, fixedDelaySeconds: 0, initialTvLap: 1, sampleSize: 5, fallbackLapSeconds: 45.0, maximumDelay: 600.0 },
     devices: [],           // [{ url, name, enabled }]
     scan: { prefix: '192.168.1.', from: 1, to: 254 }
@@ -41,7 +42,9 @@
     ['gtwc', 'seriesMatch', 'text', {}],
     ['gtwc', 'apiUrl', 'text', {}],
     ['imsa', 'raceOnly', 'checkbox', {}],
-    ['imsa', 'apiUrl', 'text', {}]
+    ['imsa', 'apiUrl', 'text', {}],
+    ['indycar', 'raceOnly', 'checkbox', {}],
+    ['indycar', 'apiUrl', 'text', {}]
   ];
 
   /* name : clé de dictionnaire (settings.name.*) du nom court du champ, repris dans le message d'erreur. */
@@ -59,10 +62,10 @@
   /* Fusionne avec les valeurs par défaut et valide. Lève une Error (message dans la langue courante) si invalide. */
   RF.validateSettings = function (raw) {
     var D = RF.DEFAULT_SETTINGS, r = obj(raw);
-    var s = obj(r.source), w = obj(r.wled), c = obj(r.wec), el = obj(r.elms), gt = obj(r.gtwc), im = obj(r.imsa), t = obj(r.tvSync), sc = obj(r.scan);
+    var s = obj(r.source), w = obj(r.wled), c = obj(r.wec), el = obj(r.elms), gt = obj(r.gtwc), im = obj(r.imsa), ic = obj(r.indycar), t = obj(r.tvSync), sc = obj(r.scan);
     var out = {
       source: {
-        type: ['nascar', 'wec', 'imsa', 'elms', 'gtwc'].indexOf(s.type == null ? D.source.type : s.type) !== -1 ? (s.type || D.source.type) : (function () { throw new Error(RF.t('settings.err.sourceType')); })(),
+        type: ['nascar', 'wec', 'imsa', 'elms', 'gtwc', 'indycar'].indexOf(s.type == null ? D.source.type : s.type) !== -1 ? (s.type || D.source.type) : (function () { throw new Error(RF.t('settings.err.sourceType')); })(),
         pollInterval: num(s.pollInterval == null ? D.source.pollInterval : s.pollInterval, 'settings.name.pollInterval', 0.2, 3600),
         requestTimeout: num(s.requestTimeout == null ? D.source.requestTimeout : s.requestTimeout, 'settings.name.sourceTimeout', 0.5, 120)
       },
@@ -97,6 +100,11 @@
       },
       imsa: {
         apiUrl: String(im.apiUrl || D.imsa.apiUrl), raceOnly: im.raceOnly == null ? D.imsa.raceOnly : !!im.raceOnly
+      },
+      indycar: {
+        series: ic.series == null || ic.series === '' ? D.indycar.series : ['I', 'L', 'all'].indexOf(String(ic.series)) !== -1 ? String(ic.series)
+          : (function () { throw new Error(RF.t('settings.err.indycarSeries')); })(),
+        raceOnly: ic.raceOnly == null ? D.indycar.raceOnly : !!ic.raceOnly, apiUrl: String(ic.apiUrl || D.indycar.apiUrl)
       },
       tvSync: {
         enabled: !!(t.enabled == null ? D.tvSync.enabled : t.enabled),
