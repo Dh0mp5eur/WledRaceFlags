@@ -82,6 +82,7 @@
     return RF.t('_meta.locale');
   };
   RF.formatTime = function (d) { try { return d.toLocaleTimeString(RF.locale()); } catch (e) { return d.toLocaleTimeString(); } };
+  RF.formatHourMinute = function (d) { try { return d.toLocaleTimeString(RF.locale(), { hour: '2-digit', minute: '2-digit' }); } catch (e) { return d.toTimeString().slice(0, 5); } };
   RF.formatDateTime = function (d) { try { return d.toLocaleString(RF.locale()); } catch (e) { return d.toLocaleString(); } };
   /* Jour et mois d'une date AAAA-MM-JJ (jj/mm en français, mm/jj en anglais américain). */
   RF.formatDayMonth = function (isoDate) {

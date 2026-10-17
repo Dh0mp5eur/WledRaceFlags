@@ -144,6 +144,7 @@ test('ELMS : la source griiip choisit la course de sa série et porte le nom elm
       res.setHeader('Content-Type', 'application/json');
       if (req.url.indexOf('/live/session-info/') === 0) return res.end(JSON.stringify(sessions));
       if (req.url === '/meta/sessions-schedule-live') return res.end(JSON.stringify(live));
+      if (req.url === '/live/race-flags/2') return res.end(JSON.stringify([{ flag: 'Yellow', lapNumber: 4 }]));
       res.writeHead(404); res.end('{}');
     });
     srv.listen(0, '127.0.0.1', function () {
@@ -155,6 +156,20 @@ test('ELMS : la source griiip choisit la course de sa série et porte le nom elm
         assert.equal(snap.remainingSeconds, 13800);
         live = 'pas une liste';
         return src.poll().then(function () { throw new Error('devrait échouer'); }, function (e) { assert.equal(e.name, 'SourceError'); assert.ok(/ELMS/.test(e.message), e.message); });
+      }).then(function () {
+        var api = 'http://127.0.0.1:' + srv.address().port;
+        live = [];
+        sessions[2].isStarted = false;                                     // la course n'a pas commencé, la qualification roule
+        return RF.listGriiipSessions({ apiUrl: api, seriesName: 'European Le Mans Series' }).then(function (list) {
+          assert.deepEqual(list.map(function (x) { return x.name + '/' + x.started; }), ['Qualifying/true', 'Race/false']);   // série filtrée, triée par heure
+          return new RF.WecSource({ name: 'elms', label: 'ELMS', seriesName: 'European Le Mans Series', apiUrl: api, sessionId: 'live' }).poll();
+        }).then(function (snap) {
+          assert.equal(snap.metadata.session_id, 2); assert.equal(snap.metadata.session_name, 'Qualifying'); assert.equal(snap.flag, F.YELLOW);   // session en cours : la qualification
+          return new RF.WecSource({ name: 'elms', label: 'ELMS', seriesName: 'European Le Mans Series', apiUrl: api }).poll().then(function () { throw new Error('devrait échouer'); },
+            function (e) { assert.ok(/Aucune course active/.test(e.message), e.message); });                                                // automatique : course seulement
+        }).then(function () {
+          return new RF.WecSource({ name: 'elms', label: 'ELMS', seriesName: 'European Le Mans Series', apiUrl: api, sessionId: 2 }).poll();
+        }).then(function (snap) { assert.equal(snap.metadata.session_name, 'Qualifying'); });                                              // numéro imposé : nom retrouvé
       }).then(function () { srv.close(); resolve(); }, function (e) { srv.close(); reject(e); });
     });
   });
@@ -166,6 +181,8 @@ test('ELMS : réglages par défaut et validation', function () {
   assert.equal(RF.validateSettings({ source: { type: 'elms' } }).source.type, 'elms');
   assert.equal(RF.validateSettings({ elms: { sessionId: '18210' } }).elms.sessionId, 18210);
   assert.throws(function () { RF.validateSettings({ elms: { sessionId: 0 } }); }, /Session ELMS/);
+  assert.equal(RF.validateSettings({ elms: { sessionId: 'live' } }).elms.sessionId, 'live');
+  assert.equal(RF.validateSettings({ wec: { sessionId: 'live' } }).wec.sessionId, 'live');
 });
 
 test('GTWC : codes TrackFlag de Swiss Timing (damier d\'abord, FCY / voiture de sécurité / code 60 = jaune)', function () {
@@ -179,7 +196,7 @@ test('GTWC : codes TrackFlag de Swiss Timing (damier d\'abord, FCY / voiture de 
   assert.equal(RF._sroInternals.leaderLap({ a: { ListIndex: 1, MainResult: { TotalLapCount: 26 } }, b: { ListIndex: 0, MainResult: { TotalLapCount: 27 } } }), 27);
 });
 
-test('GTWC : découverte de la course, attente avant le départ, copie périmée ignorée', function () {
+test('GTWC : découverte de la course, attente avant le départ, copie périmée ignorée, temps restant qui défile', function () {
   var GTWC = 'b9e4a2c3-ada0-4e0e-8c81-5e8f3574ae23', MEET = 'f7ed3638-c61a-4e0a-b7c4-1b0e90a4e620', RACE = '7ab0947f-e429-4b00-9f58-cbc78e143fdc';
   var season = { content: { full: { Series: { x: { Id: GTWC, Name: 'GTWorldChEU pwrd by AWS Endurance Cup' }, y: { Id: 'gt4', Name: 'GT4 European Series' } },
     Meetings: { m1: { Id: 'old', State: 2, Name: 'Barcelona' }, m2: { Id: MEET, State: 1, Name: 'Endurance Cup Round 10', Location: 'Portimao' } } } } };
@@ -187,7 +204,7 @@ test('GTWC : découverte de la course, attente avant le départ, copie périmée
     Competitions: { c1: { Id: 'c-gtwc', SerieId: GTWC, Name: 'GTWorldChEU pwrd by AWS Endurance Cup' }, c2: { Id: 'c-gt4', SerieId: 'gt4', Name: 'GT4 European Series' } },
     Units: { u1: { Id: 'q1', Name: 'Qualifying 1', CompetitionId: 'c-gtwc', Type: 1, State: 2, BeginTime: '16.10.2026 17:55:00' },
              u2: { Id: 'gt4r', Name: 'Race 1', CompetitionId: 'c-gt4', Type: 0, State: 1, BeginTime: '17.10.2026 13:45:00' },
-             u3: { Id: RACE, Name: 'Race', CompetitionId: 'c-gtwc', Type: 0, State: 0, BeginTime: '17.10.2026 17:00:00' } } } } };
+             u3: { Id: RACE, Name: 'Race', CompetitionId: 'c-gtwc', Type: 0, State: 0, BeginTime: '17.10.2026 17:00:00', Duration: '3:00:00' } } } } };
   var timing = null, urls = [];
   return new Promise(function (resolve, reject) {
     var srv = http.createServer(function (req, res) {
@@ -214,14 +231,28 @@ test('GTWC : découverte de la course, attente avant le départ, copie périmée
         });
       }).then(function (snap) {
         assert.equal(snap.flag, F.YELLOW); assert.equal(snap.remainingSeconds, 9665); assert.equal(snap.lap, 12); assert.equal(snap.metadata.sync, 50);
+        assert.equal(snap.metadata.elapsed, 10800 - 9665);                              // durée prévue (3 h) moins le temps restant
+        clock += 10000;
         timing = { uid: 40, content: { full: { UntInfo: { TrackFlag: 1, RemainingTime: '2:50:00' }, Results: {} } } };      // copie plus ancienne servie par le CDN
         return src.poll();
       }).then(function (snap) {
         assert.equal(snap.flag, F.YELLOW); assert.equal(snap.metadata.sync, 50);
+        assert.equal(snap.remainingSeconds, 9655, 'document inchangé : le temps restant défile quand même');
         timing = { uid: 60, content: { full: { UntInfo: { TrackFlag: 1, RemainingTime: '2:40:00' }, Results: {} } } };
         return src.poll();
       }).then(function (snap) {
-        assert.equal(snap.flag, F.GREEN);
+        assert.equal(snap.flag, F.GREEN); assert.equal(snap.remainingSeconds, 9600, 'nouveau document qui annonce une fin plus proche : retenu');
+        clock += 30000; return src.poll();
+      }).then(function (snap) {
+        assert.equal(snap.remainingSeconds, 9570);
+        timing = { uid: 61, content: { full: { UntInfo: { TrackFlag: 8, RemainingTime: '2:39:30' }, Results: {} } } };     // drapeau rouge : horloge arrêtée
+        return src.poll().then(function (snap) { clock += 60000; assert.equal(snap.remainingSeconds, 9570); return src.poll(); });
+      }).then(function (snap) {
+        assert.equal(snap.flag, F.RED); assert.equal(snap.remainingSeconds, 9570, 'rouge : le temps restant ne défile pas');
+        clock += 600000; timing = { uid: 62, content: { full: { UntInfo: { TrackFlag: 1, RemainingTime: '2:39:30' }, Results: {} } } };
+        return src.poll().then(function (snap) { assert.equal(snap.remainingSeconds, 9570, 'relance : on repart de la valeur du flux'); clock += 5000; return src.poll(); });
+      }).then(function (snap) {
+        assert.equal(snap.flag, F.GREEN); assert.equal(snap.remainingSeconds, 9565);
         assert.equal(urls.filter(function (u) { return /SEASON_JSON/.test(u); }).length, 1, 'course en cours : le programme n\'est plus relu');
         var api = 'http://127.0.0.1:' + srv.address().port;
         return RF.listSroRaces({ apiUrl: api }).then(function (cat) {                    // menus de l'onglet : toutes les séries du meeting

@@ -46,7 +46,6 @@
     'race.championship': 'Championship',
     'race.interval': 'Interval (s)',
     'race.wecSession': 'WEC session',
-    'race.auto': 'auto',
     'race.tvSync': 'Synchronize with the TV',
     'race.tvLap': 'Lap shown on TV',
     'race.record': 'Record flag changes',
@@ -340,8 +339,8 @@
   /* ---------- ELMS and griiip sessions ---------- */
   root.RF.addMessages('en', {
     'race.elmsSession': 'ELMS session',
-    'tip.wecSession': 'Number of the WEC session to follow. Empty: the WEC race in progress is found automatically.',
-    'tip.elmsSession': 'Number of the ELMS session to follow. Empty: the ELMS race in progress is found automatically.',
+    'tip.wecSession': 'WEC session to follow: the race in progress (automatic), any session in progress (practice, qualifying, hyperpole), or a specific session of the weekend.',
+    'tip.elmsSession': 'ELMS session to follow: the race in progress (automatic), any session in progress (practice, qualifying), or a specific session of the weekend.',
     'settings.name.elmsSession': 'ELMS session',
     'settings.field.elms.seriesName': 'ELMS series',
     'settings.field.elms.apiUrl': 'ELMS API',
@@ -372,11 +371,21 @@
     'gtwc.allSeries': 'All series',
     'gtwc.autoRace': 'Automatic (in progress, otherwise the next one)',
     'gtwc.raceOption': '{day} {time} · {name} · {series} ({state})',
-    'gtwc.stateNotStarted': 'upcoming',
-    'gtwc.stateRunning': 'in progress',
-    'gtwc.stateFinished': 'finished',
+    'session.stateUpcoming': 'upcoming',
+    'session.stateRunning': 'in progress',
+    'session.stateFinished': 'finished',
     'gtwc.loading': 'Loading the SRO meeting schedule…',
     'gtwc.noMeeting': 'No SRO meeting in progress: the menus will fill in when a meeting is active.',
     'settings.err.gtwcSeries': 'Invalid GTWC series: a Swiss Timing ID or “all” is expected'
+  });
+
+  /* ---------- WEC and ELMS tabs: weekend sessions ---------- */
+  root.RF.addMessages('en', {
+    'griiip.autoRace': 'Automatic (race in progress)',
+    'griiip.anySession': 'Session in progress (practice, qualifying or race)',
+    'griiip.sessionOption': '{day} {time} · {name} ({state})',
+    'griiip.loading': 'Loading the weekend sessions…',
+    'griiip.noSession': 'No session in progress in the feed: the menu will fill in when a session is active.',
+    'err.griiip.noSession': 'No session in progress for "{series}"'
   });
 })(typeof window !== 'undefined' ? window : global);

@@ -79,11 +79,11 @@
         redPreset: optPreset(w.redPreset, 'settings.name.redPreset')
       },
       wec: {
-        sessionId: c.sessionId == null || c.sessionId === '' ? null : num(c.sessionId, 'settings.name.wecSession', 1, 1000000, true),
+        sessionId: c.sessionId == null || c.sessionId === '' ? null : c.sessionId === 'live' ? 'live' : num(c.sessionId, 'settings.name.wecSession', 1, 1000000, true),     // 'live' : session en cours, tous types
         apiUrl: String(c.apiUrl || D.wec.apiUrl), seriesName: String(c.seriesName || D.wec.seriesName)
       },
       elms: {
-        sessionId: el.sessionId == null || el.sessionId === '' ? null : num(el.sessionId, 'settings.name.elmsSession', 1, 1000000, true),
+        sessionId: el.sessionId == null || el.sessionId === '' ? null : el.sessionId === 'live' ? 'live' : num(el.sessionId, 'settings.name.elmsSession', 1, 1000000, true),
         apiUrl: String(el.apiUrl || D.elms.apiUrl), seriesName: String(el.seriesName || D.elms.seriesName)
       },
       gtwc: {

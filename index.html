@@ -9,7 +9,7 @@
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <script>try{var d=document.documentElement,t=localStorage.getItem("raceflags.theme");if(t==="dark"||t==="light")d.setAttribute("data-theme",t)}catch(e){}
 try{var l=localStorage.getItem("raceflags.lang"),n=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language];if(!l)l=String(n[0]||"en").toLowerCase().split("-")[0];d.lang=l;if(l!=="fr"){d.className+=" i18n-pending";setTimeout(function(){d.className=d.className.replace(" i18n-pending","")},2000)}}catch(e){}</script>
-<link rel="stylesheet" href="css/app.css?v=48d808d1b3">
+<link rel="stylesheet" href="css/app.css?v=1cec3837d8">
 </head>
 <body>
 <header>
@@ -78,10 +78,12 @@ try{var l=localStorage.getItem("raceflags.lang"),n=navigator.languages&&navigato
         <label><span class="name" data-i18n="race.gtwcUnit" data-i18n-attr="data-tip:tip.gtwcUnit">Course</span> <select id="gtwc-race"></select></label>
       </div>
       <div id="gtwc-status" class="hint mode-gtwc" role="status"></div>
+      <div id="wec-status" class="hint mode-wec" role="status"></div>
+      <div id="elms-status" class="hint mode-elms" role="status"></div>
       <div class="row">
         <label><span data-i18n="race.interval">Intervalle (s)</span> <input id="s-pollInterval" type="number" step="0.1" min="0.2"></label>
-        <label class="mode-wec"><span class="name" data-i18n="race.wecSession" data-i18n-attr="data-tip:tip.wecSession">Session WEC</span> <input id="s-sessionId" type="number" min="1" data-i18n-attr="placeholder:race.auto"></label>
-        <label class="mode-elms"><span class="name" data-i18n="race.elmsSession" data-i18n-attr="data-tip:tip.elmsSession">Session ELMS</span> <input id="s-elmsSessionId" type="number" min="1" data-i18n-attr="placeholder:race.auto"></label>
+        <label class="mode-wec"><span class="name" data-i18n="race.wecSession" data-i18n-attr="data-tip:tip.wecSession">Session WEC</span> <select id="wec-session"></select></label>
+        <label class="mode-elms"><span class="name" data-i18n="race.elmsSession" data-i18n-attr="data-tip:tip.elmsSession">Session ELMS</span> <select id="elms-session"></select></label>
       </div>
     <div class="row mode-fixed">
       <div class="clock-field">
@@ -177,22 +179,22 @@ try{var l=localStorage.getItem("raceflags.lang"),n=navigator.languages&&navigato
     <pre id="log"></pre>
   </section>
 </main>
-<script defer src="js/core.js?v=48d808d1b3"></script>
-<script defer src="js/i18n.js?v=48d808d1b3"></script>
-<script defer src="js/i18n/fr.js?v=48d808d1b3"></script>
-<script defer src="js/i18n/en.js?v=48d808d1b3"></script>
-<script defer src="js/sources/nascar.js?v=48d808d1b3"></script>
-<script defer src="js/sources/wec.js?v=48d808d1b3"></script>
-<script defer src="js/sources/sro.js?v=48d808d1b3"></script>
-<script defer src="js/sources/imsa.js?v=48d808d1b3"></script>
-<script defer src="js/sources/replay.js?v=48d808d1b3"></script>
-<script defer src="js/sync.js?v=48d808d1b3"></script>
-<script defer src="js/wled.js?v=48d808d1b3"></script>
-<script defer src="js/discovery.js?v=48d808d1b3"></script>
-<script defer src="js/settings.js?v=48d808d1b3"></script>
-<script defer src="js/recording.js?v=48d808d1b3"></script>
-<script defer src="js/nascar-import.js?v=48d808d1b3"></script>
-<script defer src="js/engine.js?v=48d808d1b3"></script>
-<script defer src="js/ui.js?v=48d808d1b3"></script>
+<script defer src="js/core.js?v=1cec3837d8"></script>
+<script defer src="js/i18n.js?v=1cec3837d8"></script>
+<script defer src="js/i18n/fr.js?v=1cec3837d8"></script>
+<script defer src="js/i18n/en.js?v=1cec3837d8"></script>
+<script defer src="js/sources/nascar.js?v=1cec3837d8"></script>
+<script defer src="js/sources/wec.js?v=1cec3837d8"></script>
+<script defer src="js/sources/sro.js?v=1cec3837d8"></script>
+<script defer src="js/sources/imsa.js?v=1cec3837d8"></script>
+<script defer src="js/sources/replay.js?v=1cec3837d8"></script>
+<script defer src="js/sync.js?v=1cec3837d8"></script>
+<script defer src="js/wled.js?v=1cec3837d8"></script>
+<script defer src="js/discovery.js?v=1cec3837d8"></script>
+<script defer src="js/settings.js?v=1cec3837d8"></script>
+<script defer src="js/recording.js?v=1cec3837d8"></script>
+<script defer src="js/nascar-import.js?v=1cec3837d8"></script>
+<script defer src="js/engine.js?v=1cec3837d8"></script>
+<script defer src="js/ui.js?v=1cec3837d8"></script>
 </body>
 </html>

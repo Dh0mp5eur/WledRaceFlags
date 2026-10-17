@@ -15,7 +15,8 @@ et sans serveur applicatif. Il suffit de servir les fichiers (ou d'ouvrir `index
 ## Fonctionnalités
 
 - **Suivi en direct** des flux de chronométrage publics de NASCAR, du FIA WEC, de l'ELMS, d'IMSA et du GT World Challenge Europe (Endurance et Sprint Cup).
-  L'onglet GTWC propose aussi les courses de soutien du meeting SRO (GT4, GT2, McLaren Trophy…) : choisissez la *Série* et la *Course*, ou laissez *Automatique* suivre la course en cours.
+  Les onglets WEC et ELMS suivent aussi les essais, qualifications et hyperpoles : choisissez *Session en cours* ou une session précise du week-end
+  (le menu liste les sessions présentes dans le flux live). L'onglet GTWC propose aussi les courses de soutien du meeting SRO (GT4, GT2, McLaren Trophy…) : choisissez la *Série* et la *Course*, ou laissez *Automatique* suivre la course en cours.
 - **Effets sur la bande** :
   - vert ou damier : clignotements verts, puis la main est rendue ;
   - jaune et rouge : une seconde de couleur pleine, puis un effet « breathe » tant que le drapeau dure ;
@@ -97,6 +98,8 @@ devrait afficher avec le retard actuel. Faites-la coïncider avec l'écran :
 
 - avec les boutons ▲ ▼ de chaque segment (ou les flèches du clavier) : le retard change aussitôt ;
 - ou en tapant l'heure lue à l'écran : l'horloge se fige au premier chiffre, Entrée valide, Échap annule.
+
+Choisissez d'abord le *Type d'horloge* affiché par votre diffusion : *Temps restant* ou *Temps écoulé* (la TV du GT World Challenge montre en général le temps écoulé).
 
 ### 3. Réglages
 

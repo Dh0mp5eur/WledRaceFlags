@@ -85,7 +85,10 @@
     this._api = (opts.apiUrl || WEC_API).replace(/\/+$/, '');
     this._series = opts.seriesName || 'FIA World Endurance Championship';
     this._timeoutMs = (opts.timeout || 10) * 1000;
-    this._sessionId = opts.sessionId || null;
+    /* opts.sessionId : vide = course en cours (automatique), 'live' = n'importe quelle session en cours (essais, qualifications, course), ou un numéro imposé. */
+    this._any = opts.sessionId === 'live';
+    this._fixedId = opts.sessionId && !this._any ? parseInt(opts.sessionId, 10) || null : null;
+    this._sessionId = null;
     this._meta = {};
     this._signal = null;
   }
@@ -95,21 +98,36 @@
     return RF.fetchJson(this._api + path, { headers: { Accept: 'application/json' } }, this._timeoutMs, this._signal)
       .catch(function (e) { throw RF.SourceError(RF.t('err.griiip.readFailed', { name: label, detail: e && e.message || e })); });
   };
-  WecSource.prototype._discover = function () {
+  /* Sessions de la série dans le flux « live » : { sid, name, type, started, chequered, start, event, item }, triées par heure de départ. */
+  WecSource.prototype._sessions = function () {
     var self = this;
     return self._get('/live/session-info/?includeViewers=false').then(function (sessions) {
       if (!Array.isArray(sessions)) throw RF.SourceError(RF.t('err.griiip.badSessions', { name: self._label }));
-      var best = null;
+      var out = [];
       sessions.forEach(function (item) {
-        if (!item || typeof item !== 'object') return;
-        if (item.seriesName !== self._series) return;
-        if (item.sessionType !== 'Race' || !item.isStarted) return;
+        if (!item || typeof item !== 'object' || item.seriesName !== self._series) return;
         var sid = sessionId(item, self._label);
         if (sid == null) return;
-        var start = String(item.startTime || '');
-        if (!best || start >= best.start) best = { start: start, sid: sid, item: item };
+        out.push({ sid: sid, name: item.sessionName || '', type: item.sessionType || '', started: !!item.isStarted, chequered: !!item.hasSeenChequered,
+                   start: String(item.startTime || ''), event: item.eventName || '', item: item });
       });
-      if (!best) throw RF.SourceError(RF.t('err.griiip.noRace', { series: self._series }));
+      return out.sort(function (a, b) { return a.start < b.start ? -1 : a.start > b.start ? 1 : 0; });
+    });
+  };
+  WecSource.prototype._discover = function () {
+    var self = this;
+    var listed = self._sessions();
+    if (self._fixedId != null) {          // numéro imposé : on cherche seulement le nom de la session pour les métadonnées
+      return listed.then(function (list) {
+        var found = list.filter(function (x) { return x.sid === self._fixedId; })[0];
+        if (found) self._meta = sessionMetadata(found.item);
+      }, function () {}).then(function () { self._sessionId = self._fixedId; });
+    }
+    return listed.then(function (list) {
+      var pool = list.filter(function (x) { return x.started && (self._any || x.type === 'Race'); });
+      var running = pool.filter(function (x) { return !x.chequered; });
+      var best = (running.length ? running : pool).slice(-1)[0];                 // la plus récente, de préférence pas encore terminée
+      if (!best) throw RF.SourceError(RF.t(self._any ? 'err.griiip.noSession' : 'err.griiip.noRace', { series: self._series }));
       self._sessionId = best.sid;
       self._meta = sessionMetadata(best.item);
     });
@@ -149,5 +167,11 @@
   WecSource.prototype.close = function () {};
 
   RF.WecSource = WecSource;
+  /* Pour le menu de l'onglet : sessions de la série dans le flux live (WEC ou ELMS). opts : apiUrl, seriesName, timeout (s). */
+  RF.listGriiipSessions = function (opts) {
+    return new WecSource(opts)._sessions().then(function (list) {
+      return list.map(function (x) { return { sid: x.sid, name: x.name, type: x.type, started: x.started, chequered: x.chequered, start: x.start, event: x.event }; });
+    });
+  };
   RF._wecInternals = { resolveFlag: resolveFlag, latestTrackFlag: latestTrackFlag, remainingSeconds: remainingSeconds, elapsedSeconds: elapsedSeconds };
 })(typeof window !== 'undefined' ? window : global);

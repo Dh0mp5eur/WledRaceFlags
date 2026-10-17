@@ -18,7 +18,7 @@
   function msgText(m) { return typeof m === 'string' ? m : RF.t(m.key, m.params); }
   /* Écrit un message dans un élément en gardant sa clé : un changement de langue le retraduit (voir refreshLanguage). */
   function setMsg(el, m) { el._msg = m || null; el.textContent = m ? msgText(m) : ''; }
-  var MSG_IDS = ['replay-msg', 'arc-status', 'delay-msg', 'scan-status', 'confirm-error', 'settings-error', 'gtwc-status'];
+  var MSG_IDS = ['replay-msg', 'arc-status', 'delay-msg', 'scan-status', 'confirm-error', 'settings-error', 'gtwc-status', 'wec-status', 'elms-status'];
 
   /* data-i18n : texte de l'élément. data-i18n-attr : « attribut:clé;attribut:clé ». */
   function applyI18n(root) {
@@ -63,8 +63,6 @@
       if (f[2] === 'checkbox') el.checked = !!v; else el.value = v == null ? '' : v;
     });
     $('s-pollInterval').value = settings.source.pollInterval;
-    $('s-sessionId').value = settings.wec.sessionId == null ? '' : settings.wec.sessionId;
-    $('s-elmsSessionId').value = settings.elms.sessionId == null ? '' : settings.elms.sessionId;
     $('tv-enabled').checked = settings.tvSync.enabled;
     $('tv-lap').value = settings.tvSync.initialTvLap;
     $('fixed-delay').value = settings.tvSync.fixedDelaySeconds;
@@ -82,8 +80,7 @@
       raw[f[0]][f[1]] = f[2] === 'checkbox' ? el.checked : el.value;
     });
     raw.source.pollInterval = $('s-pollInterval').value;
-    raw.wec.sessionId = $('s-sessionId').value;
-    raw.elms.sessionId = $('s-elmsSessionId').value;
+    Object.keys(GRIIIP_TABS).forEach(function (m) { var sel = $(GRIIIP_TABS[m].select); if (sel.options.length) raw[m].sessionId = sel.value || null; });   // menu pas encore rempli : réglage gardé
     if ($('gtwc-series').options.length) { raw.gtwc.series = $('gtwc-series').value || null; raw.gtwc.unitId = $('gtwc-race').value || null; }   // menus pas encore remplis : réglages gardés
     raw.tvSync.enabled = $('tv-enabled').checked;
     raw.tvSync.initialTvLap = $('tv-lap').value;
@@ -311,7 +308,7 @@
       t.setAttribute('aria-selected', on ? 'true' : 'false'); t.tabIndex = on ? 0 : -1; t.classList.toggle('active', on);
     });
     updateModeVisibility();
-    loadArchive(); loadSroCatalog();
+    loadArchive(); loadSroCatalog(); loadGriiipSessions();
     if ($('replay-msg')) replayMsg('', 'hint');
     if (save) { commit(); localSet('mode', mode); }
   }
@@ -360,7 +357,7 @@
 
   /* ---------- Onglet GT World Challenge Europe : séries et courses SRO du meeting en cours (Swiss Timing) ---------- */
   var sroCatalog = null, sroCatalogAt = 0, sroToken = 0;
-  var SRO_STATE_KEYS = ['gtwc.stateNotStarted', 'gtwc.stateRunning', 'gtwc.stateFinished'];
+  var SRO_STATE_KEYS = ['session.stateUpcoming', 'session.stateRunning', 'session.stateFinished'];
   function loadSroCatalog(force) {
     if ($('mode').value !== 'gtwc') return;
     if (sroCatalog && !force && Date.now() - sroCatalogAt < 60000) return fillSroSelects();
@@ -388,9 +385,44 @@
     sroCatalog.races.filter(function (r) { return RF.sroMatchSeries(r, ser.value || null, settings.gtwc.seriesMatch); }).forEach(function (r) {
       var d = /^(\d\d)\.(\d\d)\.(\d{4})\s+(\d\d:\d\d)/.exec(r.begin || '');
       opt(race, r.id, RF.t('gtwc.raceOption', { day: d ? RF.formatDayMonth(d[3] + '-' + d[2] + '-' + d[1]) : '', time: d ? d[4] : '', name: r.name,
-        series: r.series, state: RF.t(SRO_STATE_KEYS[r.state] || 'gtwc.stateNotStarted') }));
+        series: r.series, state: RF.t(SRO_STATE_KEYS[r.state] || 'session.stateUpcoming') }));
     });
     race.value = Array.prototype.some.call(race.options, function (o) { return o.value === wantRace; }) ? wantRace : '';
+  }
+
+  /* ---------- Onglets WEC et ELMS : sessions du week-end (flux live griiip) ---------- */
+  var GRIIIP_TABS = { wec: { select: 'wec-session', status: 'wec-status' }, elms: { select: 'elms-session', status: 'elms-status' } };
+  var griiipCache = {}, griiipToken = {};          // championnat -> { sessions, at } ; jeton de la dernière requête
+  function loadGriiipSessions(force) {
+    var mode = $('mode').value, cfg = GRIIIP_TABS[mode];
+    if (!cfg) return;
+    var c = griiipCache[mode];
+    if (c && !force && Date.now() - c.at < 60000) return fillGriiipSelect(mode);
+    var token = griiipToken[mode] = (griiipToken[mode] || 0) + 1;
+    if (!c) setMsg($(cfg.status), M('griiip.loading'));
+    RF.listGriiipSessions({ apiUrl: settings[mode].apiUrl, seriesName: settings[mode].seriesName, timeout: settings.source.requestTimeout }).then(function (list) {
+      if (token !== griiipToken[mode]) return;
+      griiipCache[mode] = { sessions: list, at: Date.now() };
+      fillGriiipSelect(mode);
+      setMsg($(cfg.status), list.length ? null : M('griiip.noSession'));
+    }, function (e) { if (token === griiipToken[mode]) setMsg($(cfg.status), e.message); });
+  }
+  /* Menu : automatique (course), session en cours (tous types), puis chaque session ; la session gardée disparaît si elle n'est plus dans le flux. */
+  function fillGriiipSelect(mode) {
+    var cfg = GRIIIP_TABS[mode], c = griiipCache[mode];
+    if (!cfg || !c) return;
+    var sel = $(cfg.select), saved = settings[mode].sessionId;
+    var want = sel.options.length ? sel.value : (saved == null ? '' : String(saved));
+    function opt(value, text) { var o = document.createElement('option'); o.value = value; o.textContent = text; sel.appendChild(o); }
+    sel.textContent = '';
+    opt('', RF.t('griiip.autoRace')); opt('live', RF.t('griiip.anySession'));
+    c.sessions.forEach(function (x) {
+      var d = new Date(x.start), ok = !isNaN(d.getTime());
+      var iso = ok ? d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2) : '';
+      opt(String(x.sid), RF.t('griiip.sessionOption', { day: ok ? RF.formatDayMonth(iso) : '', time: ok ? RF.formatHourMinute(d) : '', name: x.name || x.sid,
+        state: RF.t(x.started ? (x.chequered ? 'session.stateFinished' : 'session.stateRunning') : 'session.stateUpcoming') }));
+    });
+    sel.value = Array.prototype.some.call(sel.options, function (o) { return o.value === want; }) ? want : '';
   }
 
   /* Réglages de lecture lus à l'écran : servent au lancement et au recalage d'un replay en cours. */
@@ -521,7 +553,7 @@
         source: source, output: output, pollInterval: interval, skipInitialGreen: mode !== 'replay', synchronizer: sync, observers: observers, signal: ctrl.signal,
         onLog: log, onFlag: function (ev) { setBadge(ev.flag); },
         onProgress: function (s) {
-          lastTiming = { remaining: s.remainingSeconds, elapsed: s.metadata && s.metadata.elapsed ? RF.parseDuration(s.metadata.elapsed) : null, at: RF.clock() };
+          lastTiming = { remaining: s.remainingSeconds, elapsed: s.metadata && s.metadata.elapsed != null ? RF.parseDuration(s.metadata.elapsed) : null, at: RF.clock() };
           if (s.flag !== 'unknown' && noWled) setBadge(s.flag);
           if (run && run.kind === 'replay' && run.source && run.source.progress) showReplayProgress();       // tour calculé par l'horloge du replay
           else if (s.remainingSeconds != null) setProgress('race.timeRemaining', { time: RF.formatDuration(s.remainingSeconds) });
@@ -726,7 +758,7 @@
     showLocalAccessNotice();
     updateReplayButton();
     if (archiveShown) fillArchiveSelect(archiveShown);
-    fillSroSelects();
+    fillSroSelects(); Object.keys(GRIIIP_TABS).forEach(fillGriiipSelect);
     if (downloadCount != null) setDownloadLabel(downloadCount);
     if (progressState) setProgress(progressState.key, progressState.params);
     MSG_IDS.forEach(function (id) { var el = $(id); if (el._msg && typeof el._msg !== 'string') el.textContent = msgText(el._msg); });
@@ -800,6 +832,8 @@
     $('arc-race').addEventListener('change', function () { replayMsg('', 'hint'); });
     $('gtwc-series').addEventListener('change', function () { fillSroSelects(); commit(); });
     $('gtwc-race').addEventListener('change', commit);
+    $('wec-session').addEventListener('change', commit);
+    $('elms-session').addEventListener('change', commit);
     $('btn-export').onclick = exportConfig;
     $('import-config').onchange = function (e) { if (e.target.files[0]) importConfig(e.target.files[0]); e.target.value = ''; };
     $('btn-reset').onclick = function () { settings = RF.defaultSettings(); RF.saveSettings(settings); fillForms(); };

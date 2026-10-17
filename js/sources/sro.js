@@ -10,6 +10,7 @@
   var STATE = { NOT_STARTED: 0, RUNNING: 1, FINISHED: 2 };
   var REDISCOVER_MS = 60000;      // tant qu'aucune course ne roule, le programme est relu au plus une fois par minute
   var MISSING_RETRY_MS = 20000;   // chrono pas encore créé (404 avant le départ) : nouvel essai toutes les 20 s
+  var RESYNC_MS = 180000;         // nouveau document qui annonce une fin plus tardive de plus de 3 min : l'horloge a été arrêtée, on repart de sa valeur
 
   function values(x) {
     if (Array.isArray(x)) return x;
@@ -64,7 +65,8 @@
     this._unit = null;              // { id, season, name, series, seriesId, meeting, track, begin, state }
     this._discoveredAt = -Infinity;
     this._lastUid = -1;             // compteur de mises à jour du chrono : une copie plus ancienne servie par le CDN est ignorée
-    this._last = null;
+    this._last = null;              // dernier document lu (content.full)
+    this._endAt = null;             // heure estimée (ms) où le temps restant atteindra zéro, tant que l'horloge de course tourne
     this._missingAt = null;         // heure du dernier 404 du chrono
     this._now = opts.now || function () { return Date.now(); };
     this._signal = null;
@@ -111,7 +113,8 @@
               var c = u && comps[u.CompetitionId];
               if (!c || u.Type !== 0 || !u.Id) return;                                 // Type 0 : course
               races.push({ id: String(u.Id).toUpperCase(), season: season, name: u.Name, series: c.Name, seriesId: c.SerieId, meeting: x.meeting.Name,
-                           track: x.meeting.Location, begin: u.BeginTime, key: sortable(u.BeginTime), state: u.State });
+                           track: x.meeting.Location, begin: u.BeginTime, key: sortable(u.BeginTime), state: u.State,
+                           duration: RF.parseDuration(u.Duration) });
               if (c.SerieId && !seen[c.SerieId]) { seen[c.SerieId] = true; series.push({ id: c.SerieId, name: c.Name }); }
             });
           });
@@ -164,21 +167,34 @@
         if (!f || !f.UntInfo || typeof f.UntInfo !== 'object') throw RF.SourceError(RF.t('err.sro.badData', { name: self._label }));
         self._missingAt = null;
         var uid = typeof doc.uid === 'number' ? doc.uid : -1;
-        if (uid >= 0 && uid < self._lastUid && self._last) return self._last;            // copie périmée du CDN
-        self._lastUid = uid;
+        var isNew = !(uid >= 0 && uid <= self._lastUid && self._last);
+        if (uid >= 0 && uid < self._lastUid && self._last) { f = self._last; uid = self._lastUid; }   // copie périmée du CDN : on garde le document le plus récent
+        self._lastUid = uid; self._last = f;
         if (u.state !== STATE.FINISHED) u.state = STATE.RUNNING;                          // le chrono existe : la course a commencé
-        var info = f.UntInfo, meta = self._meta();
+        var info = f.UntInfo, meta = self._meta(), flag = resolveFlag(info);
+        var remaining = self._remaining(RF.parseDuration(info.RemainingTime), flag, isNew);
         meta.sync = uid;
-        self._last = RF.makeSnapshot({
-          source: self.name, flag: resolveFlag(info), rawState: 'TrackFlag=' + info.TrackFlag + (info.ChequeredFlag ? ' ChequeredFlag' : ''),
-          lap: leaderLap(f.Results), remainingSeconds: RF.parseDuration(info.RemainingTime), metadata: meta
+        if (u.duration != null && remaining != null) meta.elapsed = Math.max(0, u.duration - remaining);   // la TV montre souvent le temps écoulé
+        return RF.makeSnapshot({
+          source: self.name, flag: flag, rawState: 'TrackFlag=' + info.TrackFlag + (info.ChequeredFlag ? ' ChequeredFlag' : ''),
+          lap: leaderLap(f.Results), remainingSeconds: remaining, metadata: meta
         });
-        return self._last;
       }, function (e) {
         if (e && e.notFound) { self._missingAt = self._now(); return self._waiting(notStarted); }
         throw e;
       });
     });
+  };
+
+  /* RemainingTime n'est recalculé qu'à chaque nouveau document (toutes les une à deux minutes, constaté le 2026-10-17) et le CDN peut en servir
+     une copie vieille de 60 s : tel quel, le temps restant restait figé et l'horloge de la diffusion reculait à chaque relevé.
+     Tant que l'horloge de course tourne (vert ou jaune), chaque nouveau document donne une borne haute de l'heure de fin (maintenant + restant,
+     puisqu'il a été publié avant d'être lu) : on garde la plus petite et le temps restant défile. Rouge, damier ou départ pas donné : horloge arrêtée. */
+  SroSource.prototype._remaining = function (rem, flag, isNew) {
+    if (rem == null || (flag !== F.GREEN && flag !== F.YELLOW)) { this._endAt = null; return rem; }
+    var now = this._now(), end = now + rem * 1000;
+    if (this._endAt == null || (isNew && (end < this._endAt || end - this._endAt > RESYNC_MS))) this._endAt = end;
+    return Math.max(0, Math.round((this._endAt - now) / 1000));
   };
 
   RF.SroSource = SroSource;

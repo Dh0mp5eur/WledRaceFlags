@@ -15,7 +15,8 @@ and no application server. Just serve the files (or open `index.html`) on a devi
 ## Features
 
 - **Live tracking** of the public timing feeds of NASCAR, FIA WEC, ELMS, IMSA and GT World Challenge Europe (Endurance and Sprint Cup).
-  The GTWC tab also offers the support races of the SRO meeting (GT4, GT2, McLaren Trophy…): pick the *Series* and the *Race*, or let *Automatic* follow the race in progress.
+  The WEC and ELMS tabs can also follow practice, qualifying and hyperpole: choose *Session in progress* or a specific session of the weekend
+  (the menu lists the sessions present in the live feed). The GTWC tab also offers the support races of the SRO meeting (GT4, GT2, McLaren Trophy…): pick the *Series* and the *Race*, or let *Automatic* follow the race in progress.
 - **Strip effects**:
   - green or chequered flag: green blinks, then control is handed back;
   - yellow and red: one second of solid color, then a “breathe” effect for as long as the flag lasts;
@@ -97,6 +98,8 @@ should display with the current delay. Make it match your screen:
 
 - with the ▲ ▼ buttons of each segment (or the keyboard arrows): the delay changes at once;
 - or by typing the time you read on screen: the clock freezes at the first digit, Enter confirms, Esc cancels.
+
+First pick the *Clock type* your broadcast shows: *Time remaining* or *Time elapsed* (GT World Challenge TV usually shows the time elapsed).
 
 ### 3. Settings
 

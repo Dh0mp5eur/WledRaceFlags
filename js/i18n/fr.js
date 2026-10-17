@@ -46,7 +46,6 @@
     'race.championship': 'Championnat',
     'race.interval': 'Intervalle (s)',
     'race.wecSession': 'Session WEC',
-    'race.auto': 'auto',
     'race.tvSync': 'Synchroniser avec la TV',
     'race.tvLap': 'Tour affiché à la TV',
     'race.record': 'Enregistrer les changements de drapeau',
@@ -340,8 +339,8 @@
   /* ---------- ELMS et sessions griiip ---------- */
   root.RF.addMessages('fr', {
     'race.elmsSession': 'Session ELMS',
-    'tip.wecSession': 'Numéro de la session WEC à suivre. Vide : la course WEC en cours est trouvée automatiquement.',
-    'tip.elmsSession': 'Numéro de la session ELMS à suivre. Vide : la course ELMS en cours est trouvée automatiquement.',
+    'tip.wecSession': 'Session WEC à suivre : course en cours (automatique), n\'importe quelle session en cours (essais, qualifications, hyperpole), ou une session précise du week-end.',
+    'tip.elmsSession': 'Session ELMS à suivre : course en cours (automatique), n\'importe quelle session en cours (essais, qualifications), ou une session précise du week-end.',
     'settings.name.elmsSession': 'Session ELMS',
     'settings.field.elms.seriesName': 'Série ELMS',
     'settings.field.elms.apiUrl': 'API ELMS',
@@ -372,11 +371,21 @@
     'gtwc.allSeries': 'Toutes les séries',
     'gtwc.autoRace': 'Automatique (en cours, sinon la prochaine)',
     'gtwc.raceOption': '{day} {time} · {name} · {series} ({state})',
-    'gtwc.stateNotStarted': 'à venir',
-    'gtwc.stateRunning': 'en cours',
-    'gtwc.stateFinished': 'terminée',
+    'session.stateUpcoming': 'à venir',
+    'session.stateRunning': 'en cours',
+    'session.stateFinished': 'terminée',
     'gtwc.loading': 'Chargement du programme du meeting SRO…',
     'gtwc.noMeeting': 'Aucun meeting SRO en cours : les menus se rempliront quand un meeting sera actif.',
     'settings.err.gtwcSeries': 'Série GTWC invalide : identifiant Swiss Timing attendu, ou « all »'
+  });
+
+  /* ---------- Onglets WEC et ELMS : sessions du week-end ---------- */
+  root.RF.addMessages('fr', {
+    'griiip.autoRace': 'Automatique (course en cours)',
+    'griiip.anySession': 'Session en cours (essais, qualifications ou course)',
+    'griiip.sessionOption': '{day} {time} · {name} ({state})',
+    'griiip.loading': 'Chargement des sessions du week-end…',
+    'griiip.noSession': 'Aucune session en cours dans le flux : le menu se remplira quand une session sera active.',
+    'err.griiip.noSession': 'Aucune session en cours pour "{series}"'
   });
 })(typeof window !== 'undefined' ? window : global);
